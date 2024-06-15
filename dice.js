@@ -34,6 +34,58 @@ document.body.appendChild(renderer.domElement);
 const loader = new GLTFLoader();
 loader.load('./models/armor-dice.glb', function (gltf) {
   dice = createArmorDice(gltf.scene.children[0]);
+
+  dice.body.addEventListener('sleep', (e) => {
+    const eps = 0.2;
+    let isZero = (angle) => Math.abs(angle) < eps;
+    let isHalfPi = (angle) => Math.abs(angle - 0.5 * Math.PI) < eps;
+    let isMinusHalfPi = (angle) => Math.abs(0.5 * Math.PI + angle) < eps;
+    let isPiOrMinusPi = (angle) =>
+      Math.abs(Math.PI - angle) < eps || Math.abs(Math.PI + angle) < eps;
+
+    const euler = new CANNON.Vec3();
+    dice.body.quaternion.toEuler(euler);
+    console.dir(euler);
+
+    //TODO: Fix labels!
+    if (
+      (isZero(euler.y) && isZero(euler.x)) ||
+      (isPiOrMinusPi(euler.y) && isPiOrMinusPi(euler.x))
+    ) {
+      console.log('landed on WAIST'); // -- good
+      return;
+    }
+
+    if (isZero(euler.y)) {
+      if (isHalfPi(euler.x)) {
+        console.log('landed on BODY 1'); // -- double-check
+      } else if (isMinusHalfPi(euler.x)) {
+        console.log('landed on ARMS'); // --
+      } else if (isPiOrMinusPi(euler.x)) {
+        console.log('landed on FOOT'); // --
+      } else {
+        console.log('weird...');
+      }
+
+      // if (isZero(euler.x) && isZero(euler.y)) {
+      // console.log('landed on WAIST');
+      // } else if (isZero(euler.x) && isZero(euler.z)) {
+      //   console.log('landed on BODY');
+      // } else if (isZero(euler.y) && isZero(euler.z)) {
+      //   console.log('landed on ARM');
+    } else if (isHalfPi(euler.y)) {
+      // showRollResults(2);
+
+      console.log('landed on HEAD'); // -- good
+      // showRollResults(5);
+    } else if (isMinusHalfPi(euler.y)) {
+      console.log('landed on BODY 2'); // --
+    } else {
+      // landed on edge => wait to fall on side and fire the event again
+      // dice.body.allowSleep = true;
+      console.log('weird pt 2.');
+    }
+  });
 });
 
 renderer.render(scene, camera);
