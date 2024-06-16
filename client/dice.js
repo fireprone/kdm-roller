@@ -36,6 +36,8 @@ loader.load('./models/armor-dice.glb', function (gltf) {
   dice = createArmorDice(gltf.scene.children[0]);
 
   dice.body.addEventListener('sleep', (e) => {
+    dice.body.allowSleep = false;
+
     const eps = 0.1;
     let isZero = (angle) => Math.abs(angle) < eps;
     let isHalfPi = (angle) => Math.abs(angle - 0.5 * Math.PI) < eps;
@@ -48,7 +50,7 @@ loader.load('./models/armor-dice.glb', function (gltf) {
 
     const topFace = getTopFaceofDice(euler);
     if (topFace == null) {
-      console.log('try re-rolling');
+      dice.body.allowSleep = true;
       return;
     }
     console.log('landed on ' + topFace);
@@ -99,6 +101,7 @@ window.addEventListener('keydown', () => {
     return;
   }
 
+  dice.body.allowSleep = true;
   dice.body.position = new CANNON.Vec3(5, 0, 0);
 
   dice.body.velocity.setZero();
@@ -133,6 +136,7 @@ function createArmorDice(mesh) {
   const body = new CANNON.Body({
     mass: 1,
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+    sleepTimeLimit: 0.1,
   });
   body.position.copy(mesh.position);
   body.quaternion.copy(mesh.quaternion);
