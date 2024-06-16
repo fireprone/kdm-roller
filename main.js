@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ArmorDice } from './dice';
 
 const scene = new THREE.Scene();
@@ -45,7 +44,7 @@ renderer.render(scene, camera);
 requestAnimationFrame(render);
 
 window.addEventListener('keydown', () => {
-  if (!dice) {
+  if (!dice.body) {
     return;
   }
 
@@ -76,21 +75,6 @@ function render() {
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
-}
-
-function createArmorDice(mesh) {
-  scene.add(mesh);
-
-  const body = new CANNON.Body({
-    mass: 1,
-    shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-    sleepTimeLimit: 0.1,
-  });
-  body.position.copy(mesh.position);
-  body.quaternion.copy(mesh.quaternion);
-  world.addBody(body);
-
-  return { mesh, body };
 }
 
 function createNumberedDice() {
