@@ -1,112 +1,189 @@
-import { DiscordSDK } from '@discord/embedded-app-sdk';
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { ArmorDice } from './dice';
 
-import rocketLogo from '/rocket.png';
-import './style.css';
-import { DiceD6, DiceManager } from 'threejs-dice';
-
-// Will eventually store the authenticated user's access_token
-let auth;
-
-const discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
-
-setupDiscordSdk().then(() => {
-  console.log('Discord SDK is authenticated');
-
-  // appendVoiceChannelName();
-  // appendGuildAvatar();
+const scene = new THREE.Scene();
+const world = new CANNON.World({
+  allowSleep: true,
+  gravity: new CANNON.Vec3(0, 0, -50),
 });
-async function setupDiscordSdk() {
-  await discordSdk.ready();
-  console.log('Discord SDK is ready');
+world.defaultContactMaterial.restitution = 0.3;
 
-  // Authorize with Discord Client
-  const { code } = await discordSdk.commands.authorize({
-    client_id: import.meta.env.VITE_DISCORD_CLIENT_ID,
-    response_type: 'code',
-    state: '',
-    prompt: 'none',
-    scope: ['identify', 'guilds'],
-  });
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
 
-  // Retrieve an access_token from your activity's server
-  const response = await fetch('/api/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      code,
-    }),
-  });
-  const { access_token } = await response.json();
+camera.position.z = 5;
 
-  // Authenticate with Discord client (using the access_token)
-  auth = await discordSdk.commands.authenticate({
-    access_token,
-  });
+// const dice = createNumberedDice();
+let dice = null;
+createFloor();
+createWall(new THREE.Vector2(-5, 0), new THREE.Vector3(0, 1, 0)); // West
+createWall(new THREE.Vector2(0, 5), new THREE.Vector3(1, 0, 0)); // North
+createWall(new THREE.Vector2(5, 0), new THREE.Vector3(0, -1, 0)); // East
+createWall(new THREE.Vector2(0, -5), new THREE.Vector3(-1, 0, 0)); // South
+createLight();
 
-  if (auth == null) {
-    throw new Error('Authenticate command failed');
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+dice = new ArmorDice();
+dice
+  .load()
+  .then(() => {
+    scene.add(dice.mesh);
+    world.addBody(dice.body);
+  })
+  .catch((err) => console.error(err));
+
+renderer.render(scene, camera);
+requestAnimationFrame(render);
+
+window.addEventListener('keydown', () => {
+  if (!dice) {
+    return;
   }
+
+  dice.body.allowSleep = true;
+  dice.body.position = new CANNON.Vec3(5, 0, 0);
+
+  dice.body.velocity.setZero();
+  dice.body.angularVelocity.setZero();
+
+  dice.mesh.rotation.set(
+    2 * Math.PI * Math.random(),
+    0,
+    2 * Math.PI * Math.random()
+  );
+  dice.body.quaternion.copy(dice.mesh.quaternion);
+
+  const force = 3 + 5 * Math.random();
+  dice.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+});
+
+function render() {
+  world.fixedStep();
+
+  if (dice.mesh) {
+    dice.mesh.position.copy(dice.body.position);
+    dice.mesh.quaternion.copy(dice.body.quaternion);
+  }
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(render);
 }
 
-// async function appendVoiceChannelName() {
-//   const app = document.querySelector('#app');
+function createArmorDice(mesh) {
+  scene.add(mesh);
 
-//   let activityChannelName = 'Unknown';
+  const body = new CANNON.Body({
+    mass: 1,
+    shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+    sleepTimeLimit: 0.1,
+  });
+  body.position.copy(mesh.position);
+  body.quaternion.copy(mesh.quaternion);
+  world.addBody(body);
 
-//   // Requesting the channel in GDMs (when the guild ID is null) requires
-//   // the dm_channels.read scope which requires Discord approval.
-//   if (discordSdk.channelId != null && discordSdk.guildId != null) {
-//     // Over RPC collect info about the channel
-//     const channel = await discordSdk.commands.getChannel({
-//       channel_id: discordSdk.channelId,
-//     });
-//     if (channel.name != null) {
-//       activityChannelName = channel.name;
-//     }
-//   }
+  return { mesh, body };
+}
 
-//   // Update the UI with the name of the current voice channel
-//   const textTagString = `Activity Channel: "${activityChannelName}"`;
-//   const textTag = document.createElement('p');
-//   textTag.textContent = textTagString;
-//   app.appendChild(textTag);
-// }
+function createNumberedDice() {
+  const geometry = new THREE.OctahedronGeometry(1, 0, 0);
+  const material = new THREE.MeshStandardMaterial({ color: 0x555555 });
+  const mesh = new THREE.Mesh(geometry, material);
 
-// async function appendGuildAvatar() {
-//   const app = document.querySelector('#app');
+  mesh.rotation.x += 1;
+  mesh.rotation.y += 1;
 
-//   // 1. From the HTTP API fetch a list of all of the user's guilds
-//   const guilds = await fetch(`https://discord.com/api/v10/users/@me/guilds`, {
-//     headers: {
-//       // NOTE: we're using the access_token provided by the "authenticate" command
-//       Authorization: `Bearer ${auth.access_token}`,
-//       'Content-Type': 'application/json',
-//     },
-//   }).then((response) => response.json());
+  scene.add(mesh);
 
-//   // 2. Find the current guild's info, including it's "icon"
-//   const currentGuild = guilds.find((g) => g.id === discordSdk.guildId);
+  const body = new CANNON.Body({
+    mass: 1,
+    shape: createOctahedronBody(),
+  });
+  body.position.copy(mesh.position);
+  body.quaternion.copy(mesh.quaternion);
+  world.addBody(body);
 
-//   // 3. Append to the UI an img tag with the related information
-//   if (currentGuild != null) {
-//     const guildImg = document.createElement('img');
-//     guildImg.setAttribute(
-//       'src',
-//       // More info on image formatting here: https://discord.com/developers/docs/reference#image-formatting
-//       `https://cdn.discordapp.com/icons/${currentGuild.id}/${currentGuild.icon}.webp?size=128`
-//     );
-//     guildImg.setAttribute('width', '128px');
-//     guildImg.setAttribute('height', '128px');
-//     guildImg.setAttribute('style', 'border-radius: 50%;');
-//     app.appendChild(guildImg);
-//   }
-// }
+  return { mesh, body };
+}
 
-// document.querySelector('#app').innerHTML = `
-//   <div>
-//     <img src="${rocketLogo}" class="logo" alt="Discord" />
-//     <h1>Hello, World!!</h1>
-//   </div>
-// `;
+function createFloor() {
+  // Three.js (visible) object
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshStandardMaterial({ color: 0xaa00000 })
+  );
+  floor.receiveShadow = true;
+  floor.position.z = -5;
+  scene.add(floor);
+
+  // Cannon-es (physical) object
+  const floorBody = new CANNON.Body({
+    type: CANNON.Body.STATIC,
+    shape: new CANNON.Plane(),
+  });
+  floorBody.position.copy(floor.position);
+  floorBody.quaternion.copy(floor.quaternion);
+  world.addBody(floorBody);
+}
+
+function createWall(position, axis) {
+  const wallShadow = new THREE.MeshStandardMaterial({ color: 0x777777 });
+
+  const wallMesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), wallShadow);
+  wallMesh.receiveShadow = true;
+  wallMesh.position.x = position.x;
+  wallMesh.position.y = position.y;
+
+  wallMesh.quaternion.setFromAxisAngle(axis, Math.PI / 2);
+  scene.add(wallMesh);
+
+  // Cannon-es (physical) object
+  const wallBody = new CANNON.Body({
+    type: CANNON.Body.STATIC,
+    shape: new CANNON.Plane(),
+  });
+  wallBody.position.copy(wallMesh.position);
+  wallBody.quaternion.copy(wallMesh.quaternion);
+  world.addBody(wallBody);
+}
+
+function createLight() {
+  const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa);
+  scene.add(hemisphereLight);
+
+  const pointLight = new THREE.PointLight(0xffffff, 50, 10);
+  scene.add(pointLight);
+}
+
+function createOctahedronBody() {
+  const vertices = [
+    new CANNON.Vec3(1, 0, 0),
+    new CANNON.Vec3(0, 0, -1),
+    new CANNON.Vec3(0, 1, 0),
+    new CANNON.Vec3(0, 0, 1),
+    new CANNON.Vec3(-1, 0, 0),
+    new CANNON.Vec3(0, -1, 0),
+  ];
+
+  return new CANNON.ConvexPolyhedron({
+    vertices,
+    faces: [
+      [0, 4, 3],
+      [2, 4, 3],
+      [2, 5, 3],
+      [0, 3, 5],
+      [0, 1, 4],
+      [4, 2, 1],
+      [1, 5, 2],
+      [0, 5, 1],
+    ],
+  });
+}
