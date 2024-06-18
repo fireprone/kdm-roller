@@ -7,7 +7,7 @@ const world = new CANNON.World({
   allowSleep: true,
   gravity: new CANNON.Vec3(0, 0, -50),
 });
-world.defaultContactMaterial.restitution = 0.3;
+world.defaultContactMaterial.restitution = 0.5;
 
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -18,8 +18,21 @@ const camera = new THREE.PerspectiveCamera(
 
 camera.position.z = 5;
 
-// const dice = createNumberedDice();
-let dice = null;
+const diceArray = [];
+
+const initDiceArray = async (array) => {
+  for (var i = 0; i < 9; i++) {
+    const dice = new ArmorDice();
+    await dice.load();
+
+    dice.mesh.visible = false;
+
+    scene.add(dice.mesh);
+    array.push(dice);
+  }
+};
+initDiceArray(diceArray);
+
 createFloor();
 createWall(new THREE.Vector2(-5, 0), new THREE.Vector3(0, 1, 0)); // West
 createWall(new THREE.Vector2(0, 5), new THREE.Vector3(1, 0, 0)); // North
@@ -31,47 +44,37 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-dice = new ArmorDice();
-dice
-  .load()
-  .then(() => {
-    scene.add(dice.mesh);
-    world.addBody(dice.body);
-  })
-  .catch((err) => console.error(err));
-
 renderer.render(scene, camera);
 requestAnimationFrame(render);
 
-window.addEventListener('keydown', () => {
-  if (!dice.body) {
+window.addEventListener('keydown', async (event) => {
+  const numberOfDice = Number(event.key);
+  console.debug(numberOfDice);
+  if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > 9) {
     return;
   }
 
-  dice.body.allowSleep = true;
-  dice.body.position = new CANNON.Vec3(5, 0, 0);
-
-  dice.body.velocity.setZero();
-  dice.body.angularVelocity.setZero();
-
-  dice.mesh.rotation.set(
-    2 * Math.PI * Math.random(),
-    0,
-    2 * Math.PI * Math.random()
-  );
-  dice.body.quaternion.copy(dice.mesh.quaternion);
-
-  const force = 3 + 5 * Math.random();
-  dice.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+  for (let i = 0; i < diceArray.length; i++) {
+    if (i < numberOfDice) {
+      diceArray[i].mesh.visible = true;
+      world.addBody(diceArray[i].body);
+      diceArray[i].roll();
+    } else {
+      diceArray[i].mesh.visible = false;
+      world.removeBody(diceArray[i].body);
+    }
+  }
 });
 
 function render() {
   world.fixedStep();
 
-  if (dice.mesh) {
-    dice.mesh.position.copy(dice.body.position);
-    dice.mesh.quaternion.copy(dice.body.quaternion);
-  }
+  diceArray.forEach((dice) => {
+    if (dice.mesh) {
+      dice.mesh.position.copy(dice.body.position);
+      dice.mesh.quaternion.copy(dice.body.quaternion);
+    }
+  });
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
