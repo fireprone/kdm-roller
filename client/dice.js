@@ -77,7 +77,7 @@ export function ArmorDice() {
           initializeMeshAndBody
         );
 
-        this.mesh = armorDiceMesh;
+        this.mesh = armorDiceMesh.clone();
         this.body = new CANNON.Body({
           mass: 1,
           shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
@@ -96,4 +96,21 @@ export function ArmorDice() {
         window.addEventListener('loadedArmorDiceMesh', initializeMeshAndBody);
       }
     });
+  this.roll = () => {
+    this.body.allowSleep = true;
+    this.body.position = new CANNON.Vec3(5, 0, 0);
+
+    this.body.velocity.setZero();
+    this.body.angularVelocity.setZero();
+
+    this.mesh.rotation.set(
+      2 * Math.PI * Math.random(),
+      0,
+      2 * Math.PI * Math.random()
+    );
+    this.body.quaternion.copy(this.mesh.quaternion);
+
+    const force = 3 + 5 * Math.random();
+    this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+  };
 }
