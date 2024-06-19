@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ArmorDice } from './dice';
 
+const MAX_DICE = 5;
+
 const scene = new THREE.Scene();
 const world = new CANNON.World({
   allowSleep: true,
@@ -21,7 +23,7 @@ camera.position.z = 5;
 const diceArray = [];
 
 const initDiceArray = async (array) => {
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < MAX_DICE; i++) {
     const dice = new ArmorDice();
     await dice.load();
 
@@ -50,7 +52,7 @@ requestAnimationFrame(render);
 window.addEventListener('keydown', async (event) => {
   const numberOfDice = Number(event.key);
   console.debug(numberOfDice);
-  if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > 9) {
+  if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
     return;
   }
 
