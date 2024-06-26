@@ -50,11 +50,25 @@ renderer.render(scene, camera);
 requestAnimationFrame(render);
 
 window.addEventListener('keydown', async (event) => {
+  //TODO: Send 'keydown' event to server, have server recognize the event, then send event to all clients to roll on each
   const numberOfDice = Number(event.key);
   console.debug(numberOfDice);
   if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
     return;
   }
+
+  // Retrieve an access_token from your activity's server
+  // const response = await fetch('/api/roll', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     numberOfDice,
+  //   }),
+  // });
+  // const rollResponse = await response.text();
+  // console.log('roll ' + rollResponse);
 
   for (let i = 0; i < diceArray.length; i++) {
     if (i < numberOfDice) {
