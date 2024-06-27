@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+import { WebSocketServer, WebSocket } from 'ws';
+
 dotenv.config({ path: '../.env' });
 
 const app = express();
@@ -39,6 +41,49 @@ app.post('/api/roll', async (req, res) => {
   // res.send({x: , y: })
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
+});
+
+const onSocketPreError = (error) => {
+  console.log(error);
+};
+
+const onSocketPostError = (error) => {
+  console.log(error);
+};
+
+const wss = new WebSocketServer({ noServer: true });
+
+server.on('upgrade', (req, socket, head) => {
+  // Catch any errors on the HTTP server while trying to upgrade
+  socket.on('error', onSocketPreError);
+
+  wss.handleUpgrade(req, socket, head, (ws) => {
+    // Upgrade is done, remove error listener
+    socket.removeListener('error', onSocketPreError);
+    // Start connection
+    wss.emit('connection', ws, req);
+  });
+});
+
+wss.on('connection', (ws, req) => {
+  // Catch any errors on the WebSocket server
+  ws.on('error', onSocketPostError);
+
+  ws.on('message', (msg, isBinary) => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        // If no need to send to self, include 'ws !== client' in conditional
+        // client.send(msg, { binary: isBinary });
+        // console.log(msg);
+        client.send(`{ "amount":  ${msg} }`);
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    // Cleanup
+    console.log('connection "closed"');
+  });
 });

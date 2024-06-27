@@ -49,26 +49,28 @@ document.body.appendChild(renderer.domElement);
 renderer.render(scene, camera);
 requestAnimationFrame(render);
 
+const websocket = new WebSocket('ws://localhost:3001/');
+
+websocket.onmessage = (e) => {
+  const message = JSON.parse(e.data);
+  console.log(message.amount);
+};
+
 window.addEventListener('keydown', async (event) => {
-  //TODO: Send 'keydown' event to server, have server recognize the event, then send event to all clients to roll on each
   const numberOfDice = Number(event.key);
   console.debug(numberOfDice);
   if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
     return;
   }
 
-  // Retrieve an access_token from your activity's server
-  // const response = await fetch('/api/roll', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     numberOfDice,
-  //   }),
-  // });
-  // const rollResponse = await response.text();
-  // console.log('roll ' + rollResponse);
+  //TODO: Send 'keydown' event to server, have server recognize the event, then send event to all clients to roll on each
+  if (websocket.readyState === websocket.OPEN) {
+    console.log('open!');
+    websocket.send(`${numberOfDice}`);
+    return;
+  } else {
+    console.log('not yet....');
+  }
 
   for (let i = 0; i < diceArray.length; i++) {
     if (i < numberOfDice) {
@@ -96,26 +98,26 @@ function render() {
   requestAnimationFrame(render);
 }
 
-function createNumberedDice() {
-  const geometry = new THREE.OctahedronGeometry(1, 0, 0);
-  const material = new THREE.MeshStandardMaterial({ color: 0x555555 });
-  const mesh = new THREE.Mesh(geometry, material);
+// function createNumberedDice() {
+//   const geometry = new THREE.OctahedronGeometry(1, 0, 0);
+//   const material = new THREE.MeshStandardMaterial({ color: 0x555555 });
+//   const mesh = new THREE.Mesh(geometry, material);
 
-  mesh.rotation.x += 1;
-  mesh.rotation.y += 1;
+//   mesh.rotation.x += 1;
+//   mesh.rotation.y += 1;
 
-  scene.add(mesh);
+//   scene.add(mesh);
 
-  const body = new CANNON.Body({
-    mass: 1,
-    shape: createOctahedronBody(),
-  });
-  body.position.copy(mesh.position);
-  body.quaternion.copy(mesh.quaternion);
-  world.addBody(body);
+//   const body = new CANNON.Body({
+//     mass: 1,
+//     shape: createOctahedronBody(),
+//   });
+//   body.position.copy(mesh.position);
+//   body.quaternion.copy(mesh.quaternion);
+//   world.addBody(body);
 
-  return { mesh, body };
-}
+//   return { mesh, body };
+// }
 
 function createFloor() {
   // Three.js (visible) object
@@ -166,27 +168,27 @@ function createLight() {
   scene.add(pointLight);
 }
 
-function createOctahedronBody() {
-  const vertices = [
-    new CANNON.Vec3(1, 0, 0),
-    new CANNON.Vec3(0, 0, -1),
-    new CANNON.Vec3(0, 1, 0),
-    new CANNON.Vec3(0, 0, 1),
-    new CANNON.Vec3(-1, 0, 0),
-    new CANNON.Vec3(0, -1, 0),
-  ];
+// function createOctahedronBody() {
+//   const vertices = [
+//     new CANNON.Vec3(1, 0, 0),
+//     new CANNON.Vec3(0, 0, -1),
+//     new CANNON.Vec3(0, 1, 0),
+//     new CANNON.Vec3(0, 0, 1),
+//     new CANNON.Vec3(-1, 0, 0),
+//     new CANNON.Vec3(0, -1, 0),
+//   ];
 
-  return new CANNON.ConvexPolyhedron({
-    vertices,
-    faces: [
-      [0, 4, 3],
-      [2, 4, 3],
-      [2, 5, 3],
-      [0, 3, 5],
-      [0, 1, 4],
-      [4, 2, 1],
-      [1, 5, 2],
-      [0, 5, 1],
-    ],
-  });
-}
+//   return new CANNON.ConvexPolyhedron({
+//     vertices,
+//     faces: [
+//       [0, 4, 3],
+//       [2, 4, 3],
+//       [2, 5, 3],
+//       [0, 3, 5],
+//       [0, 1, 4],
+//       [4, 2, 1],
+//       [1, 5, 2],
+//       [0, 5, 1],
+//     ],
+//   });
+// }
