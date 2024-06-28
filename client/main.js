@@ -52,8 +52,18 @@ requestAnimationFrame(render);
 const websocket = new WebSocket('ws://localhost:3001/');
 
 websocket.onmessage = (e) => {
-  const message = JSON.parse(e.data);
-  console.log(message.amount);
+  const rolls = JSON.parse(e.data);
+
+  for (let i = 0; i < diceArray.length; i++) {
+    if (i < rolls.length) {
+      diceArray[i].mesh.visible = true;
+      world.addBody(diceArray[i].body);
+      diceArray[i].roll(rolls[i]);
+    } else {
+      diceArray[i].mesh.visible = false;
+      world.removeBody(diceArray[i].body);
+    }
+  }
 };
 
 window.addEventListener('keydown', async (event) => {
@@ -63,20 +73,27 @@ window.addEventListener('keydown', async (event) => {
     return;
   }
 
-  //TODO: Send 'keydown' event to server, have server recognize the event, then send event to all clients to roll on each
   if (websocket.readyState === websocket.OPEN) {
-    console.log('open!');
+    console.debug('open!');
     websocket.send(`${numberOfDice}`);
     return;
   } else {
-    console.log('not yet....');
+    console.debug('not yet....');
   }
 
   for (let i = 0; i < diceArray.length; i++) {
     if (i < numberOfDice) {
       diceArray[i].mesh.visible = true;
       world.addBody(diceArray[i].body);
-      diceArray[i].roll();
+
+      const rotation = {
+        x: 2 * Math.PI * Math.random(),
+        y: 0,
+        z: 2 * Math.PI * Math.random(),
+      };
+      const force = 3 + 5 * Math.random();
+
+      diceArray[i].roll({ rotation, force });
     } else {
       diceArray[i].mesh.visible = false;
       world.removeBody(diceArray[i].body);

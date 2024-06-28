@@ -72,12 +72,26 @@ wss.on('connection', (ws, req) => {
   ws.on('error', onSocketPostError);
 
   ws.on('message', (msg, isBinary) => {
+    const numberOfDice = Number(msg);
+    const diceArray = [];
+
+    for (let i = 0; i < numberOfDice; i++) {
+      const rotation = {
+        x: 2 * Math.PI * Math.random(),
+        y: 0,
+        z: 2 * Math.PI * Math.random(),
+      };
+      const force = 3 + 5 * Math.random();
+
+      diceArray.push({ rotation, force });
+    }
+    console.log(Number(msg));
+
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         // If no need to send to self, include 'ws !== client' in conditional
         // client.send(msg, { binary: isBinary });
-        // console.log(msg);
-        client.send(`{ "amount":  ${msg} }`);
+        client.send(JSON.stringify(diceArray));
       }
     });
   });
