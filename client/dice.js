@@ -96,21 +96,16 @@ export function ArmorDice() {
         window.addEventListener('loadedArmorDiceMesh', initializeMeshAndBody);
       }
     });
-  this.roll = () => {
+  this.roll = ({ rotation, force }) => {
     this.body.allowSleep = true;
     this.body.position = new CANNON.Vec3(5, 0, 0);
 
     this.body.velocity.setZero();
     this.body.angularVelocity.setZero();
 
-    this.mesh.rotation.set(
-      2 * Math.PI * Math.random(),
-      0,
-      2 * Math.PI * Math.random()
-    );
+    this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
     this.body.quaternion.copy(this.mesh.quaternion);
 
-    const force = 3 + 5 * Math.random();
     this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
   };
 }

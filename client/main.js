@@ -49,6 +49,25 @@ document.body.appendChild(renderer.domElement);
 renderer.render(scene, camera);
 requestAnimationFrame(render);
 
+const isDiscord = location.host.includes('discord');
+const wsProtocol = isDiscord ? 'wss' : 'ws';
+const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
+
+websocket.onmessage = (e) => {
+  const rolls = JSON.parse(e.data);
+
+  for (let i = 0; i < diceArray.length; i++) {
+    if (i < rolls.length) {
+      diceArray[i].mesh.visible = true;
+      world.addBody(diceArray[i].body);
+      diceArray[i].roll(rolls[i]);
+    } else {
+      diceArray[i].mesh.visible = false;
+      world.removeBody(diceArray[i].body);
+    }
+  }
+};
+
 window.addEventListener('keydown', async (event) => {
   const numberOfDice = Number(event.key);
   console.debug(numberOfDice);
@@ -56,11 +75,27 @@ window.addEventListener('keydown', async (event) => {
     return;
   }
 
+  if (websocket.readyState === websocket.OPEN) {
+    console.debug('open!');
+    websocket.send(`${numberOfDice}`);
+    return;
+  } else {
+    console.debug('not yet....');
+  }
+
   for (let i = 0; i < diceArray.length; i++) {
     if (i < numberOfDice) {
       diceArray[i].mesh.visible = true;
       world.addBody(diceArray[i].body);
-      diceArray[i].roll();
+
+      const rotation = {
+        x: 2 * Math.PI * Math.random(),
+        y: 0,
+        z: 2 * Math.PI * Math.random(),
+      };
+      const force = 3 + 5 * Math.random();
+
+      diceArray[i].roll({ rotation, force });
     } else {
       diceArray[i].mesh.visible = false;
       world.removeBody(diceArray[i].body);
@@ -80,27 +115,6 @@ function render() {
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
-}
-
-function createNumberedDice() {
-  const geometry = new THREE.OctahedronGeometry(1, 0, 0);
-  const material = new THREE.MeshStandardMaterial({ color: 0x555555 });
-  const mesh = new THREE.Mesh(geometry, material);
-
-  mesh.rotation.x += 1;
-  mesh.rotation.y += 1;
-
-  scene.add(mesh);
-
-  const body = new CANNON.Body({
-    mass: 1,
-    shape: createOctahedronBody(),
-  });
-  body.position.copy(mesh.position);
-  body.quaternion.copy(mesh.quaternion);
-  world.addBody(body);
-
-  return { mesh, body };
 }
 
 function createFloor() {
@@ -150,29 +164,4 @@ function createLight() {
 
   const pointLight = new THREE.PointLight(0xffffff, 50, 10);
   scene.add(pointLight);
-}
-
-function createOctahedronBody() {
-  const vertices = [
-    new CANNON.Vec3(1, 0, 0),
-    new CANNON.Vec3(0, 0, -1),
-    new CANNON.Vec3(0, 1, 0),
-    new CANNON.Vec3(0, 0, 1),
-    new CANNON.Vec3(-1, 0, 0),
-    new CANNON.Vec3(0, -1, 0),
-  ];
-
-  return new CANNON.ConvexPolyhedron({
-    vertices,
-    faces: [
-      [0, 4, 3],
-      [2, 4, 3],
-      [2, 5, 3],
-      [0, 3, 5],
-      [0, 1, 4],
-      [4, 2, 1],
-      [1, 5, 2],
-      [0, 5, 1],
-    ],
-  });
 }
