@@ -49,7 +49,9 @@ document.body.appendChild(renderer.domElement);
 renderer.render(scene, camera);
 requestAnimationFrame(render);
 
-const websocket = new WebSocket('ws://localhost:3001/');
+const isDiscord = location.host.includes('discord');
+const wsProtocol = isDiscord ? 'wss' : 'ws';
+const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
 
 websocket.onmessage = (e) => {
   const rolls = JSON.parse(e.data);
