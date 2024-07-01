@@ -97,19 +97,12 @@ export function ArmorDice() {
       }
     });
   this.roll = ({ rotation, force }) => {
-    console.debug(rotation);
-
     this.body.allowSleep = true;
     this.body.position = new CANNON.Vec3(5, 0, 0);
 
     this.body.velocity.setZero();
     this.body.angularVelocity.setZero();
 
-    // this.mesh.rotation.set(
-    //   2 * Math.PI * Math.random(),
-    //   0,
-    //   2 * Math.PI * Math.random()
-    // );
     this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
     this.body.quaternion.copy(this.mesh.quaternion);
 

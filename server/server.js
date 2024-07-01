@@ -33,18 +33,6 @@ app.post('/api/token', async (req, res) => {
   res.send({ access_token });
 });
 
-let count = 0;
-app.post('/api/roll', async (req, res) => {
-  count++;
-  console.log('count added to ' + count);
-  res.send(`${count} times`);
-  // res.send({x: , y: })
-});
-
-const server = app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
-
 const onSocketPreError = (error) => {
   console.log(error);
 };
