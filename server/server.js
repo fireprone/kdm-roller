@@ -33,6 +33,10 @@ app.post('/api/token', async (req, res) => {
   res.send({ access_token });
 });
 
+const server = app.listen(port, () => {
+  console.log(`Server listening at http://localhost:${port}`);
+});
+
 const onSocketPreError = (error) => {
   console.log(error);
 };
