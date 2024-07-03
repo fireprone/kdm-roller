@@ -82,8 +82,7 @@ wss.on('connection', (ws, req) => {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         // If no need to send to self, include 'ws !== client' in conditional
-        // client.send(msg, { binary: isBinary });
-        client.send(JSON.stringify(diceArray));
+        client.send(JSON.stringify({ action: 'roll', data: diceArray }));
       }
     });
   });
@@ -91,5 +90,9 @@ wss.on('connection', (ws, req) => {
   ws.on('close', () => {
     // Cleanup
     console.log('connection "closed"');
+
+    wss.clients.forEach((client) => {
+      client.send(JSON.stringify({ action: 'disconnect' }));
+    });
   });
 });
