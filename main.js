@@ -54,17 +54,28 @@ const wsProtocol = isDiscord ? 'wss' : 'ws';
 const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
 
 websocket.onmessage = (e) => {
-  const rolls = JSON.parse(e.data);
-
-  for (let i = 0; i < diceArray.length; i++) {
-    if (i < rolls.length) {
-      diceArray[i].mesh.visible = true;
-      world.addBody(diceArray[i].body);
-      diceArray[i].roll(rolls[i]);
-    } else {
-      diceArray[i].mesh.visible = false;
-      world.removeBody(diceArray[i].body);
-    }
+  const message = JSON.parse(e.data);
+  switch (message.action) {
+    //case 'connect':
+    // break;
+    case 'disconnect':
+      console.log('another player disconnected');
+      break;
+    case 'roll':
+      const rolls = message.data;
+      for (let i = 0; i < diceArray.length; i++) {
+        if (i < rolls.length) {
+          diceArray[i].mesh.visible = true;
+          world.addBody(diceArray[i].body);
+          diceArray[i].roll(rolls[i]);
+        } else {
+          diceArray[i].mesh.visible = false;
+          world.removeBody(diceArray[i].body);
+        }
+      }
+      break;
+    default:
+      console.error(`action (${message.action}) not recognized`);
   }
 };
 
@@ -76,11 +87,8 @@ window.addEventListener('keydown', async (event) => {
   }
 
   if (websocket.readyState === websocket.OPEN) {
-    console.debug('open!');
     websocket.send(`${numberOfDice}`);
     return;
-  } else {
-    console.debug('not yet....');
   }
 
   for (let i = 0; i < diceArray.length; i++) {
