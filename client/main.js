@@ -62,11 +62,12 @@ websocket.onmessage = (e) => {
       // Initialize remaining players
       newPlayers.forEach((playerName) => {
         const diceArray = [];
+        const playerCollisionGroup = (Object.entries(players).length + 1) * 2;
 
         const initDiceArray = async (array) => {
           for (var i = 0; i < MAX_DICE; i++) {
             const dice = new ArmorDice();
-            await dice.load();
+            await dice.load(playerCollisionGroup);
 
             dice.mesh.visible = false;
 
@@ -89,7 +90,6 @@ websocket.onmessage = (e) => {
       console.debug('another player disconnected');
       break;
     case 'roll':
-      //TODO: Remove collision between dice that belong to other players
       const { username, rolls } = message.data;
       const playerDice = players[username].dice;
 
@@ -151,6 +151,7 @@ function createFloor() {
   const floorBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Plane(),
+    collisionFilterGroup: 1,
   });
   floorBody.position.copy(floor.position);
   floorBody.quaternion.copy(floor.quaternion);
@@ -172,6 +173,7 @@ function createWall(position, axis) {
   const wallBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Plane(),
+    collisionFilterGroup: 1,
   });
   wallBody.position.copy(wallMesh.position);
   wallBody.quaternion.copy(wallMesh.quaternion);

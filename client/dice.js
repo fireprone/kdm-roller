@@ -69,7 +69,7 @@ export function ArmorDice() {
 
   this.mesh = null;
   this.body = null;
-  this.load = () =>
+  this.load = (playerCollisionGroup) =>
     new Promise((resolve) => {
       const initializeMeshAndBody = () => {
         window.removeEventListener(
@@ -78,10 +78,13 @@ export function ArmorDice() {
         );
 
         this.mesh = armorDiceMesh.clone();
+
         this.body = new CANNON.Body({
           mass: 1,
           shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
           sleepTimeLimit: 0.1,
+          collisionFilterGroup: playerCollisionGroup,
+          collisionFilterMask: 1 /* floor & walls */ | playerCollisionGroup,
         });
         this.body.position.copy(this.mesh.position);
         this.body.quaternion.copy(this.mesh.quaternion);
