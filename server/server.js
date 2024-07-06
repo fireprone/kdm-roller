@@ -96,7 +96,7 @@ wss.on('connection', (ws, req) => {
     // Cleanup
     console.log('connection "closed"');
 
-    broadcast({ action: 'disconnect' });
+    broadcast({ action: 'disconnect', data: { username: ws.username } });
   });
 });
 

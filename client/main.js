@@ -50,7 +50,7 @@ websocket.onmessage = (e) => {
   const message = JSON.parse(e.data);
   switch (message.action) {
     case 'connect':
-      console.debug('a player connected');
+      console.debug(message.data);
       // Grab all player names from response
       const serverPlayers = message.data;
 
@@ -62,9 +62,20 @@ websocket.onmessage = (e) => {
       // Initialize remaining players
       newPlayers.forEach((playerName) => {
         const diceArray = [];
-        const playerCollisionGroup = (Object.entries(players).length + 1) * 2;
 
-        const isTransparent = playerName !== selfUsername;
+        // Ensure collision group is not already assigned to another player
+        let playerCollisionGroup;
+        let count = 1;
+        for (const name in players) {
+          const newCollisionGroup = count * 2;
+
+          if (players[name].collisionGroup !== newCollisionGroup) {
+            playerCollisionGroup = newCollisionGroup;
+            break;
+          }
+
+          count++;
+        }
 
         const initDiceArray = async (array) => {
           for (var i = 0; i < MAX_DICE; i++) {
@@ -72,7 +83,7 @@ websocket.onmessage = (e) => {
             await dice.load(playerCollisionGroup);
 
             dice.mesh.visible = false;
-            if (isTransparent) {
+            if (playerName !== selfUsername) {
               dice.mesh.material.opacity = 0.2;
               dice.mesh.material.transparent = true;
             }
@@ -84,16 +95,31 @@ websocket.onmessage = (e) => {
           return array;
         };
 
-        initDiceArray(diceArray).then((array) => {
-          players = { ...players, [playerName]: { dice: array } };
-        });
+        players = {
+          ...players,
+          [playerName]: { dice: [], collisionGroup: playerCollisionGroup },
+        };
 
-        players = { ...players, [playerName]: { dice: [] } };
+        initDiceArray(diceArray).then((array) => {
+          players[playerName].dice = array;
+        });
       });
       break;
     case 'disconnect':
-      //TODO: Clean up 'players' object and remove dice when someone leaves
-      console.debug('another player disconnected');
+      const playerName = message.data.username;
+      console.debug(`${playerName} disconnected`);
+
+      const playerDicePool = players[playerName].dice;
+
+      for (let i = 0; i < playerDicePool.length; i++) {
+        playerDicePool[i].mesh.material.dispose();
+        playerDicePool[i].mesh.geometry.dispose();
+
+        scene.remove(playerDicePool[i].mesh);
+        world.removeBody(playerDicePool[i].body);
+      }
+
+      delete players[playerName];
       break;
     case 'roll':
       const { username, rolls } = message.data;
