@@ -78,6 +78,11 @@ export function ArmorDice() {
         );
 
         this.mesh = armorDiceMesh.clone();
+        this.mesh.traverse((node) => {
+          if (node.isMesh) {
+            node.material = node.material.clone();
+          }
+        });
 
         this.body = new CANNON.Body({
           mass: 1,

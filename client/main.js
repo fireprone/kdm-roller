@@ -40,10 +40,10 @@ const isDiscord = location.host.includes('discord');
 const wsProtocol = isDiscord ? 'wss' : 'ws';
 const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
 
-const username = 'User#' + Math.floor(Math.random() * 100);
+const selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
 websocket.onopen = () => {
-  websocket.send(JSON.stringify({ action: 'join', data: username }));
+  websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
 };
 
 websocket.onmessage = (e) => {
@@ -64,12 +64,18 @@ websocket.onmessage = (e) => {
         const diceArray = [];
         const playerCollisionGroup = (Object.entries(players).length + 1) * 2;
 
+        const isTransparent = playerName !== selfUsername;
+
         const initDiceArray = async (array) => {
           for (var i = 0; i < MAX_DICE; i++) {
             const dice = new ArmorDice();
             await dice.load(playerCollisionGroup);
 
             dice.mesh.visible = false;
+            if (isTransparent) {
+              dice.mesh.material.opacity = 0.2;
+              dice.mesh.material.transparent = true;
+            }
 
             scene.add(dice.mesh);
             array.push(dice);
