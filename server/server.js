@@ -63,33 +63,65 @@ wss.on('connection', (ws, req) => {
   // Catch any errors on the WebSocket server
   ws.on('error', onSocketPostError);
 
-  ws.on('message', (msg, isBinary) => {
-    const numberOfDice = Number(msg);
-    const diceArray = [];
+  ws.on('message', (body, isBinary) => {
+    const message = JSON.parse(body);
+    switch (message.action) {
+      case 'join':
+        const username = message.data;
+        console.log(`${username} joined`);
 
-    for (let i = 0; i < numberOfDice; i++) {
-      const rotation = {
-        x: 2 * Math.PI * Math.random(),
-        y: 0,
-        z: 2 * Math.PI * Math.random(),
-      };
-      const force = 3 + 5 * Math.random();
+        ws.username = username; // extend websocket with unique identifier
 
-      diceArray.push({ rotation, force });
+        const usersConnected = [];
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            usersConnected.push(client.username);
+          }
+        });
+
+        broadcast({ action: 'connect', data: usersConnected });
+        break;
+      case 'roll':
+        const numberOfDice = Number(message.data);
+        const rolls = calculateRolls(numberOfDice);
+
+        broadcast({ action: 'roll', data: { username: ws.username, rolls } });
+        break;
+      default:
+        console.log(`action (${message.action}) not recognized`);
     }
-    console.log(Number(msg));
-
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        // If no need to send to self, include 'ws !== client' in conditional
-        // client.send(msg, { binary: isBinary });
-        client.send(JSON.stringify(diceArray));
-      }
-    });
   });
 
   ws.on('close', () => {
     // Cleanup
     console.log('connection "closed"');
+
+    broadcast({ action: 'disconnect', data: { username: ws.username } });
   });
 });
+
+function calculateRolls(numberOfDice) {
+  const diceArray = [];
+
+  for (let i = 0; i < numberOfDice; i++) {
+    const rotation = {
+      x: 2 * Math.PI * Math.random(),
+      y: 0,
+      z: 2 * Math.PI * Math.random(),
+    };
+    const force = 3 + 5 * Math.random();
+
+    diceArray.push({ rotation, force });
+  }
+
+  return diceArray;
+}
+
+function broadcast(body) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      // If no need to send to self, include 'ws !== client' in conditional
+      client.send(JSON.stringify(body));
+    }
+  });
+}

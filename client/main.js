@@ -20,20 +20,7 @@ const camera = new THREE.PerspectiveCamera(
 
 camera.position.z = 5;
 
-const diceArray = [];
-
-const initDiceArray = async (array) => {
-  for (var i = 0; i < MAX_DICE; i++) {
-    const dice = new ArmorDice();
-    await dice.load();
-
-    dice.mesh.visible = false;
-
-    scene.add(dice.mesh);
-    array.push(dice);
-  }
-};
-initDiceArray(diceArray);
+let players = {};
 
 createFloor();
 createWall(new THREE.Vector2(-5, 0), new THREE.Vector3(0, 1, 0)); // West
@@ -53,18 +40,104 @@ const isDiscord = location.host.includes('discord');
 const wsProtocol = isDiscord ? 'wss' : 'ws';
 const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
 
-websocket.onmessage = (e) => {
-  const rolls = JSON.parse(e.data);
+const selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
-  for (let i = 0; i < diceArray.length; i++) {
-    if (i < rolls.length) {
-      diceArray[i].mesh.visible = true;
-      world.addBody(diceArray[i].body);
-      diceArray[i].roll(rolls[i]);
-    } else {
-      diceArray[i].mesh.visible = false;
-      world.removeBody(diceArray[i].body);
-    }
+websocket.onopen = () => {
+  websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
+};
+
+websocket.onmessage = (e) => {
+  const message = JSON.parse(e.data);
+  switch (message.action) {
+    case 'connect':
+      console.debug(message.data);
+      // Grab all player names from response
+      const serverPlayers = message.data;
+
+      // Find any new players that aren't already initialized
+      const newPlayers = serverPlayers.filter((serverPlayer) => {
+        return !Object.keys(players).includes(serverPlayer);
+      });
+
+      // Initialize remaining players
+      newPlayers.forEach((playerName) => {
+        const diceArray = [];
+
+        // Ensure collision group is not already assigned to another player
+        let playerCollisionGroup;
+        let count = 1;
+        for (const name in players) {
+          const newCollisionGroup = count * 2;
+
+          if (players[name].collisionGroup !== newCollisionGroup) {
+            playerCollisionGroup = newCollisionGroup;
+            break;
+          }
+
+          count++;
+        }
+
+        const initDiceArray = async (array) => {
+          for (var i = 0; i < MAX_DICE; i++) {
+            const dice = new ArmorDice();
+            await dice.load(playerCollisionGroup);
+
+            dice.mesh.visible = false;
+            if (playerName !== selfUsername) {
+              dice.mesh.material.opacity = 0.2;
+              dice.mesh.material.transparent = true;
+            }
+
+            scene.add(dice.mesh);
+            array.push(dice);
+          }
+
+          return array;
+        };
+
+        players = {
+          ...players,
+          [playerName]: { dice: [], collisionGroup: playerCollisionGroup },
+        };
+
+        initDiceArray(diceArray).then((array) => {
+          players[playerName].dice = array;
+        });
+      });
+      break;
+    case 'disconnect':
+      const playerName = message.data.username;
+      console.debug(`${playerName} disconnected`);
+
+      const playerDicePool = players[playerName].dice;
+
+      for (let i = 0; i < playerDicePool.length; i++) {
+        playerDicePool[i].mesh.material.dispose();
+        playerDicePool[i].mesh.geometry.dispose();
+
+        scene.remove(playerDicePool[i].mesh);
+        world.removeBody(playerDicePool[i].body);
+      }
+
+      delete players[playerName];
+      break;
+    case 'roll':
+      const { username, rolls } = message.data;
+      const playerDice = players[username].dice;
+
+      for (let i = 0; i < playerDice.length; i++) {
+        if (i < rolls.length) {
+          playerDice[i].mesh.visible = true;
+          world.addBody(playerDice[i].body);
+          playerDice[i].roll(rolls[i]);
+        } else {
+          playerDice[i].mesh.visible = false;
+          world.removeBody(playerDice[i].body);
+        }
+      }
+      break;
+    default:
+      console.error(`action (${message.action}) not recognized`);
   }
 };
 
@@ -76,42 +149,21 @@ window.addEventListener('keydown', async (event) => {
   }
 
   if (websocket.readyState === websocket.OPEN) {
-    console.debug('open!');
-    websocket.send(`${numberOfDice}`);
-    return;
-  } else {
-    console.debug('not yet....');
-  }
-
-  for (let i = 0; i < diceArray.length; i++) {
-    if (i < numberOfDice) {
-      diceArray[i].mesh.visible = true;
-      world.addBody(diceArray[i].body);
-
-      const rotation = {
-        x: 2 * Math.PI * Math.random(),
-        y: 0,
-        z: 2 * Math.PI * Math.random(),
-      };
-      const force = 3 + 5 * Math.random();
-
-      diceArray[i].roll({ rotation, force });
-    } else {
-      diceArray[i].mesh.visible = false;
-      world.removeBody(diceArray[i].body);
-    }
+    websocket.send(JSON.stringify({ action: 'roll', data: numberOfDice }));
   }
 });
 
 function render() {
   world.fixedStep();
 
-  diceArray.forEach((dice) => {
-    if (dice.mesh) {
-      dice.mesh.position.copy(dice.body.position);
-      dice.mesh.quaternion.copy(dice.body.quaternion);
-    }
-  });
+  for (const name in players) {
+    players[name].dice.forEach((dice) => {
+      if (dice.mesh) {
+        dice.mesh.position.copy(dice.body.position);
+        dice.mesh.quaternion.copy(dice.body.quaternion);
+      }
+    });
+  }
 
   renderer.render(scene, camera);
   requestAnimationFrame(render);
@@ -131,6 +183,7 @@ function createFloor() {
   const floorBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Plane(),
+    collisionFilterGroup: 1,
   });
   floorBody.position.copy(floor.position);
   floorBody.quaternion.copy(floor.quaternion);
@@ -152,6 +205,7 @@ function createWall(position, axis) {
   const wallBody = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Plane(),
+    collisionFilterGroup: 1,
   });
   wallBody.position.copy(wallMesh.position);
   wallBody.quaternion.copy(wallMesh.quaternion);
