@@ -3,16 +3,33 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ArmorDice } from '../dice';
 
-const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
+const ThreeJsCanvas = ({ scene, world, setPlayerList, focusedPlayer }) => {
+  const MAX_DICE = 5;
   const ref = useRef(null);
+  const players = useRef({});
 
   useEffect(() => {
     initialize();
   }, []);
 
-  function initialize() {
-    const MAX_DICE = 5;
+  useEffect(() => {
+    if (!focusedPlayer) {
+      return;
+    }
 
+    for (const name in players.current) {
+      const playerDicePool = players.current[name].dice;
+
+      for (let i = 0; i < playerDicePool.length; i++) {
+        playerDicePool[i].mesh.material.opacity =
+          name === focusedPlayer ? 1 : 0.2;
+        playerDicePool[i].mesh.material.transparent =
+          name === focusedPlayer ? false : true;
+      }
+    }
+  }, [focusedPlayer]);
+
+  function initialize() {
     const camera: any = new THREE.PerspectiveCamera(
       75,
       ref.current.offsetWidth / ref.current.offsetHeight,
@@ -21,8 +38,6 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
     );
 
     camera.position.z = 5;
-
-    let players = {};
 
     createFloor();
     createWall(new THREE.Vector2(-5, 0), new THREE.Vector3(0, 1, 0)); // West
@@ -72,10 +87,10 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
             // Ensure collision group is not already assigned to another player
             let playerCollisionGroup;
             let count = 1;
-            for (const name in players) {
+            for (const name in players.current) {
               const newCollisionGroup = count * 2;
 
-              if (players[name].collisionGroup !== newCollisionGroup) {
+              if (players.current[name].collisionGroup !== newCollisionGroup) {
                 playerCollisionGroup = newCollisionGroup;
                 break;
               }
@@ -101,15 +116,15 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
               return array;
             };
 
-            players = {
-              ...players,
+            players.current = {
+              ...players.current,
               [playerName]: { dice: [], collisionGroup: playerCollisionGroup },
             };
 
-            setPlayerList(Object.keys(players));
+            setPlayerList(Object.keys(players.current));
 
             initDiceArray(diceArray).then((array) => {
-              players[playerName].dice = array;
+              players.current[playerName].dice = array;
             });
           });
           break;
@@ -117,7 +132,7 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
           const playerName = message.data.username;
           console.debug(`${playerName} disconnected`);
 
-          const playerDicePool = players[playerName].dice;
+          const playerDicePool = players.current[playerName].dice;
 
           for (let i = 0; i < playerDicePool.length; i++) {
             playerDicePool[i].mesh.material.dispose();
@@ -127,12 +142,12 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
             world.removeBody(playerDicePool[i].body);
           }
 
-          delete players[playerName];
-          setPlayerList(Object.keys(players));
+          delete players.current[playerName];
+          setPlayerList(Object.keys(players.current));
           break;
         case 'roll':
           const { username, rolls } = message.data;
-          const playerDice = players[username].dice;
+          const playerDice = players.current[username].dice;
 
           for (let i = 0; i < playerDice.length; i++) {
             if (i < rolls.length) {
@@ -165,8 +180,8 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
     function render() {
       world.fixedStep();
 
-      for (const name in players) {
-        players[name].dice.forEach((dice) => {
+      for (const name in players.current) {
+        players.current[name].dice.forEach((dice) => {
           if (dice.mesh) {
             dice.mesh.position.copy(dice.body.position);
             dice.mesh.quaternion.copy(dice.body.quaternion);

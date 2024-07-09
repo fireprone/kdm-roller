@@ -22,3 +22,7 @@
   max-height: 128px;
   max-width: 128px;
 }
+
+.focused {
+  background-color: #444;
+}
