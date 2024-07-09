@@ -5,11 +5,19 @@ interface Player {
   collisionGroup: Number;
 }
 
-const Players = ({ playerList }) => {
+const Players = ({ playerList, focusedPlayer, setFocusedPlayer }) => {
   return (
     <div id='player-list'>
       {playerList.map((player) => {
-        return <div key={`${player}-icon`} className='user-avatar'></div>;
+        return (
+          <div
+            key={`${player}-icon`}
+            className={`user-avatar ${
+              player === focusedPlayer ? 'focused' : ''
+            }`}
+            onClick={() => setFocusedPlayer(player)}
+          ></div>
+        );
       })}
     </div>
   );

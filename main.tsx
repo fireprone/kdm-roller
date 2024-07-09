@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import ThreeJsCanvas from './components/ThreeJsCanvas';
 import Players from './components/Players';
@@ -16,11 +16,12 @@ const root = createRoot(document.getElementById('app'));
 
 const App = () => {
   const [playerList, setPlayerList] = useState([]);
+  const [focusedPlayer, setFocusedPlayer] = useState('');
 
   return (
     <>
-      <Players {...{ playerList }} />
-      <ThreeJsCanvas {...{ scene, world, playerList, setPlayerList }} />
+      <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} />
+      <ThreeJsCanvas {...{ scene, world, setPlayerList, focusedPlayer }} />
     </>
   );
 };
