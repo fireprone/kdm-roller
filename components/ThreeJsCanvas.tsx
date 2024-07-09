@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ArmorDice } from '../dice';
 
-const ThreeJsCanvas = (props) => {
+const ThreeJsCanvas = ({ scene, world, setPlayerList }) => {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -13,16 +13,9 @@ const ThreeJsCanvas = (props) => {
   function initialize() {
     const MAX_DICE = 5;
 
-    const scene = new THREE.Scene();
-    const world = new CANNON.World({
-      allowSleep: true,
-      gravity: new CANNON.Vec3(0, 0, -50),
-    });
-    world.defaultContactMaterial.restitution = 0.5;
-
-    const camera = new THREE.PerspectiveCamera(
+    const camera: any = new THREE.PerspectiveCamera(
       75,
-      window.innerWidth / window.innerHeight,
+      ref.current.offsetWidth / ref.current.offsetHeight,
       0.1,
       100
     );
@@ -36,13 +29,16 @@ const ThreeJsCanvas = (props) => {
     createWall(new THREE.Vector2(0, 5), new THREE.Vector3(1, 0, 0)); // North
     createWall(new THREE.Vector2(5, 0), new THREE.Vector3(0, -1, 0)); // East
     createWall(new THREE.Vector2(0, -5), new THREE.Vector3(-1, 0, 0)); // South
-    createLight();
+    createLights();
 
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    //   document.body.appendChild(renderer.domElement);
-    ref.current.appendChild(renderer.domElement);
+    renderer.setSize(ref.current.offsetWidth, ref.current.offsetHeight);
 
+    window.addEventListener('resize', () => {
+      renderer.setSize(ref.current.offsetWidth, ref.current.offsetHeight);
+    });
+
+    ref.current.appendChild(renderer.domElement);
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 
@@ -110,6 +106,8 @@ const ThreeJsCanvas = (props) => {
               [playerName]: { dice: [], collisionGroup: playerCollisionGroup },
             };
 
+            setPlayerList(Object.keys(players));
+
             initDiceArray(diceArray).then((array) => {
               players[playerName].dice = array;
             });
@@ -130,6 +128,7 @@ const ThreeJsCanvas = (props) => {
           }
 
           delete players[playerName];
+          setPlayerList(Object.keys(players));
           break;
         case 'roll':
           const { username, rolls } = message.data;
@@ -181,8 +180,9 @@ const ThreeJsCanvas = (props) => {
 
     function createFloor() {
       // Three.js (visible) object
-      const floor = new THREE.Mesh(
+      const floor: any = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
+        // @ts-ignore
         new THREE.MeshStandardMaterial({ color: 0xaa00000 })
       );
       floor.receiveShadow = true;
@@ -203,8 +203,9 @@ const ThreeJsCanvas = (props) => {
     function createWall(position, axis) {
       const wallShadow = new THREE.MeshStandardMaterial({ color: 0x777777 });
 
-      const wallMesh = new THREE.Mesh(
+      const wallMesh: any = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
+        // @ts-ignore
         wallShadow
       );
       wallMesh.receiveShadow = true;
@@ -225,7 +226,7 @@ const ThreeJsCanvas = (props) => {
       world.addBody(wallBody);
     }
 
-    function createLight() {
+    function createLights() {
       const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa);
       scene.add(hemisphereLight);
 
@@ -234,7 +235,7 @@ const ThreeJsCanvas = (props) => {
     }
   }
 
-  return <div ref={ref}></div>;
+  return <div id='threejs-canvas' ref={ref}></div>;
 };
 
 export default ThreeJsCanvas;
