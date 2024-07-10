@@ -3,7 +3,13 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ArmorDice } from '../dice';
 
-const ThreeJsCanvas = ({ scene, world, setPlayerList, focusedPlayer }) => {
+const ThreeJsCanvas = ({
+  scene,
+  world,
+  setPlayerList,
+  focusedPlayer,
+  setFocusedPlayer,
+}) => {
   const MAX_DICE = 5;
   const ref = useRef(null);
   const players = useRef({});
@@ -142,6 +148,11 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList, focusedPlayer }) => {
           }
 
           delete players.current[playerName];
+
+          if (!focusedPlayer) {
+            setFocusedPlayer(selfUsername);
+          }
+
           setPlayerList(Object.keys(players.current));
           break;
         case 'roll':

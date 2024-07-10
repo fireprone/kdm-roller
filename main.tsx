@@ -21,7 +21,9 @@ const App = () => {
   return (
     <>
       <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} />
-      <ThreeJsCanvas {...{ scene, world, setPlayerList, focusedPlayer }} />
+      <ThreeJsCanvas
+        {...{ scene, world, setPlayerList, focusedPlayer, setFocusedPlayer }}
+      />
     </>
   );
 };
