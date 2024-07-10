@@ -71,13 +71,12 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList, focusedPlayer }) => {
       const message = JSON.parse(e.data);
       switch (message.action) {
         case 'connect':
-          console.debug(message.data);
           // Grab all player names from response
           const serverPlayers = message.data;
 
           // Find any new players that aren't already initialized
           const newPlayers = serverPlayers.filter((serverPlayer) => {
-            return !Object.keys(players).includes(serverPlayer);
+            return !Object.keys(players.current).includes(serverPlayer);
           });
 
           // Initialize remaining players
@@ -148,6 +147,8 @@ const ThreeJsCanvas = ({ scene, world, setPlayerList, focusedPlayer }) => {
         case 'roll':
           const { username, rolls } = message.data;
           const playerDice = players.current[username].dice;
+
+          console.log(username + ' rolled');
 
           for (let i = 0; i < playerDice.length; i++) {
             if (i < rolls.length) {
