@@ -1,28 +1,51 @@
 #app {
+  display: flex;
+  flex-flow: column;
   height: 100vh;
   width: 100vw;
 }
 
 #player-list {
   display: flex;
-  height: 20%;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 30%;
+  background-color: #171522;
 }
 
 #threejs-canvas {
   position: relative;
-  height: 80%;
+  height: 70%;
   width: 100%;
 }
 
 .user-avatar {
-  background-color: #999;
+  background-color: #6aa9b4;
   border-radius: 50%;
-  height: 100%;
-  width: 100%;
+  height: 80%;
+  width: 80%;
   max-height: 128px;
   max-width: 128px;
 }
 
 .focused {
-  background-color: #444;
+  background-color: #4a7291;
+  border: 5px solid white;
+}
+
+@media only screen and (orientation: landscape) {
+  #app {
+    flex-flow: row;
+  }
+
+  #player-list {
+    flex-direction: column;
+    height: 100%;
+    width: 30%;
+  }
+
+  #threejs-canvas {
+    height: 100%;
+    width: 70%;
+  }
 }
