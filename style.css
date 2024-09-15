@@ -21,6 +21,7 @@
 
 .user-avatar {
   background-color: #6aa9b4;
+  border: 5px solid white;
   border-radius: 50%;
   height: 80%;
   width: 80%;
@@ -30,7 +31,7 @@
 
 .focused {
   background-color: #4a7291;
-  border: 5px solid white;
+  border-width: 10px;
 }
 
 @media only screen and (orientation: landscape) {
