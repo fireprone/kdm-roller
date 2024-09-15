@@ -67,7 +67,12 @@ const ThreeJsCanvas = ({
     const wsProtocol = isDiscord ? 'wss' : 'ws';
     const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
 
-    const selfUsername = 'User#' + Math.floor(Math.random() * 100);
+    let selfUsername;
+    if (isDiscord) {
+      selfUsername = '';
+    }
+
+    selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
     websocket.onopen = () => {
       websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
