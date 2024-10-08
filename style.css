@@ -1,3 +1,9 @@
+img {
+  width: 12vw;
+  max-width: 70px;
+  padding: 0 5px;
+}
+
 #app {
   display: flex;
   flex-flow: column;
@@ -11,6 +17,30 @@
   align-items: center;
   height: 30%;
   background-color: #171522;
+}
+
+#history-list,
+#history-button {
+  position: absolute;
+  background-color: #888;
+  color: white;
+  border: 1px solid white;
+  z-index: 1;
+}
+
+#history-list {
+  bottom: 60px;
+  right: 20px;
+  max-width: 50%;
+  padding: 20px;
+  max-height: 50%;
+  overflow-y: scroll;
+}
+
+#history-button {
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
 }
 
 #threejs-canvas {
@@ -48,5 +78,9 @@
   #threejs-canvas {
     height: 100%;
     width: 70%;
+  }
+
+  #history-list {
+    max-height: 70%;
   }
 }
