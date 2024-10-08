@@ -84,8 +84,12 @@ wss.on('connection', (ws, req) => {
       case 'roll':
         const numberOfDice = Number(message.data);
         const rolls = calculateRolls(numberOfDice);
+        const timestamp = new Date();
 
-        broadcast({ action: 'roll', data: { username: ws.username, rolls } });
+        broadcast({
+          action: 'roll',
+          data: { username: ws.username, rolls, timestamp },
+        });
         break;
       default:
         console.log(`action (${message.action}) not recognized`);

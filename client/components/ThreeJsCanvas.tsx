@@ -2,6 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ArmorDice } from '../dice';
+import {
+  connectData,
+  disconnectData,
+  Message,
+  rollData,
+} from '../types/Message';
+import { priorRoll } from '../types/Roll';
 
 const ThreeJsCanvas = ({
   scene,
@@ -9,6 +16,7 @@ const ThreeJsCanvas = ({
   setPlayerList,
   focusedPlayer,
   setFocusedPlayer,
+  setPriorRolls,
 }) => {
   const MAX_DICE = 5;
   const ref = useRef(null);
@@ -34,6 +42,34 @@ const ThreeJsCanvas = ({
       }
     }
   }, [focusedPlayer]);
+
+  async function rollDice(username: string, playerDice, rolls, timestamp) {
+    const ongoingRolls: Promise<string>[] = [];
+
+    console.log(username + ' rolled');
+
+    for (let i = 0; i < playerDice.length; i++) {
+      if (i < rolls.length) {
+        playerDice[i].mesh.visible = true;
+        world.addBody(playerDice[i].body);
+        const resultPromise = playerDice[i].roll(rolls[i]);
+        ongoingRolls.push(resultPromise);
+      } else {
+        playerDice[i].mesh.visible = false;
+        world.removeBody(playerDice[i].body);
+      }
+    }
+
+    Promise.all(ongoingRolls).then((diceRolls) => {
+      const currentRoll = {
+        username,
+        timestamp: new Date(timestamp).toLocaleTimeString(),
+        faces: diceRolls,
+      };
+
+      setPriorRolls((prev: priorRoll[]) => [...prev, currentRoll]);
+    });
+  }
 
   function initialize() {
     const camera: any = new THREE.PerspectiveCamera(
@@ -79,11 +115,11 @@ const ThreeJsCanvas = ({
     };
 
     websocket.onmessage = (e) => {
-      const message = JSON.parse(e.data);
+      const message: Message = JSON.parse(e.data);
       switch (message.action) {
         case 'connect':
           // Grab all player names from response
-          const serverPlayers = message.data;
+          const serverPlayers = message.data as connectData;
 
           // Find any new players that aren't already initialized
           const newPlayers = serverPlayers.filter((serverPlayer) => {
@@ -139,7 +175,7 @@ const ThreeJsCanvas = ({
           });
           break;
         case 'disconnect':
-          const playerName = message.data.username;
+          const playerName = (message.data as disconnectData).username;
           console.debug(`${playerName} disconnected`);
 
           const playerDicePool = players.current[playerName].dice;
@@ -161,21 +197,11 @@ const ThreeJsCanvas = ({
           setPlayerList(Object.keys(players.current));
           break;
         case 'roll':
-          const { username, rolls } = message.data;
+          const { username, rolls, timestamp } = message.data as rollData;
           const playerDice = players.current[username].dice;
 
-          console.log(username + ' rolled');
+          rollDice(username, playerDice, rolls, timestamp);
 
-          for (let i = 0; i < playerDice.length; i++) {
-            if (i < rolls.length) {
-              playerDice[i].mesh.visible = true;
-              world.addBody(playerDice[i].body);
-              playerDice[i].roll(rolls[i]);
-            } else {
-              playerDice[i].mesh.visible = false;
-              world.removeBody(playerDice[i].body);
-            }
-          }
           break;
         default:
           console.error(`action (${message.action}) not recognized`);
