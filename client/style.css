@@ -22,19 +22,43 @@ img {
 #history-list,
 #history-button {
   position: absolute;
-  background-color: #888;
-  color: white;
-  border: 1px solid white;
+  background-color: #878c95;
+  color: #3a3b3c;
+  border: 5px solid darkgray;
   z-index: 1;
+}
+
+#history-button {
+  border-radius: 16px;
+  width: 10%;
+}
+
+#history-list div {
+  padding: 10px;
+}
+
+#history-list div:nth-child(even) {
+  background-color: #737780;
+  color: #bbc1cc;
 }
 
 #history-list {
   bottom: 60px;
   right: 20px;
   max-width: 50%;
-  padding: 20px;
   max-height: 50%;
   overflow-y: scroll;
+  border-radius: 16px;
+}
+
+#username {
+  font-weight: bold;
+}
+
+#timestamp {
+  position: absolute;
+  right: 10px;
+  font-style: italic;
 }
 
 #history-button {
