@@ -25,8 +25,8 @@ const RollHistory = ({ priorRolls }) => {
           {priorRolls.map((roll: priorRoll, i: number) => {
             return (
               <div key={i}>
-                {i !== 0 && <hr />}
-                {`${roll.username} -- ${roll.timestamp}`}
+                <span id='username'>{roll.username}</span>
+                <span id='timestamp'>{roll.timestamp}</span>
                 <br />
                 {roll.faces.map((face, i) => {
                   {
@@ -40,7 +40,7 @@ const RollHistory = ({ priorRolls }) => {
         </div>
       )}
       <button id='history-button' onClick={() => setIsShowing(!isShowing)}>
-        {isShowing ? 'vvv' : '§§§'}
+        {isShowing ? 'Hide' : 'History'}
       </button>
     </>
   );
