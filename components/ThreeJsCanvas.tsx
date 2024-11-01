@@ -101,7 +101,9 @@ const ThreeJsCanvas = ({
 
     const isDiscord = location.host.includes('discord');
     const wsProtocol = isDiscord ? 'wss' : 'ws';
-    const websocket = new WebSocket(`${wsProtocol}://${location.host}/api`);
+    const websocket = new WebSocket(
+      `${wsProtocol}://${location.host}${isDiscord ? '/.proxy' : ''}/api`
+    );
 
     let selfUsername;
     if (isDiscord) {

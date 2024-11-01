@@ -2,13 +2,17 @@ import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const loader = new GLTFLoader();
+const isDiscord = location.host.includes('discord');
 let armorDiceMesh = null;
 let numberOfDiceRolling = 0;
 
-loader.load('./models/armor-dice.glb', function (gltf) {
-  armorDiceMesh = gltf.scene.children[0];
-  window.dispatchEvent(new Event('loadedArmorDiceMesh'));
-});
+loader.load(
+  `.${isDiscord ? '/.proxy' : ''}/models/armor-dice.glb`,
+  function (gltf) {
+    armorDiceMesh = gltf.scene.children[0];
+    window.dispatchEvent(new Event('loadedArmorDiceMesh'));
+  }
+);
 
 export function ArmorDice() {
   const getTopFaceofDice = (euler) => {
