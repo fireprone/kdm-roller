@@ -2,12 +2,17 @@ import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const loader = new GLTFLoader();
+const isDiscord = location.host.includes('discord');
 let armorDiceMesh = null;
+let numberOfDiceRolling = 0;
 
-loader.load('./models/armor-dice.glb', function (gltf) {
-  armorDiceMesh = gltf.scene.children[0];
-  window.dispatchEvent(new Event('loadedArmorDiceMesh'));
-});
+loader.load(
+  `.${isDiscord ? '/.proxy' : ''}/models/armor-dice.glb`,
+  function (gltf) {
+    armorDiceMesh = gltf.scene.children[0];
+    window.dispatchEvent(new Event('loadedArmorDiceMesh'));
+  }
+);
 
 export function ArmorDice() {
   const getTopFaceofDice = (euler) => {
@@ -53,7 +58,7 @@ export function ArmorDice() {
     return null;
   };
 
-  const printTopFaceOfDice = () => {
+  const printTopFaceOfDice = (resolve) => {
     this.body.allowSleep = false;
 
     const euler = new CANNON.Vec3();
@@ -64,7 +69,8 @@ export function ArmorDice() {
       this.body.allowSleep = true;
       return;
     }
-    console.log('landed on ' + topFace);
+
+    resolve(topFace);
   };
 
   this.mesh = null;
@@ -93,7 +99,6 @@ export function ArmorDice() {
         });
         this.body.position.copy(this.mesh.position);
         this.body.quaternion.copy(this.mesh.quaternion);
-        this.body.addEventListener('sleep', printTopFaceOfDice);
 
         resolve();
       };
@@ -105,15 +110,19 @@ export function ArmorDice() {
       }
     });
   this.roll = ({ rotation, force }) => {
-    this.body.allowSleep = true;
-    this.body.position = new CANNON.Vec3(5, 0, 0);
+    return new Promise((resolve) => {
+      numberOfDiceRolling++;
+      this.body.allowSleep = true;
+      this.body.position = new CANNON.Vec3(5, 0, 0);
 
-    this.body.velocity.setZero();
-    this.body.angularVelocity.setZero();
+      this.body.velocity.setZero();
+      this.body.angularVelocity.setZero();
 
-    this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
-    this.body.quaternion.copy(this.mesh.quaternion);
+      this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+      this.body.quaternion.copy(this.mesh.quaternion);
 
-    this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+      this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+      this.body.addEventListener('sleep', () => printTopFaceOfDice(resolve));
+    });
   };
 }

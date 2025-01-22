@@ -1,16 +1,110 @@
-#app {
-  max-width: 1280px;
+img {
+  width: 12vw;
+  max-width: 70px;
+  padding: 0 5px;
 }
 
-#ui {
+#app {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+#player-list {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 30%;
+  background-color: #171522;
+}
+
+#history-list,
+#history-button {
   position: absolute;
-  top: 0;
-  left: 120px;
+  background-color: #878c95;
+  color: #3a3b3c;
+  border: 5px solid darkgray;
+  z-index: 1;
+}
+
+#history-button {
+  border-radius: 16px;
+  width: 10%;
+}
+
+#history-list div {
+  padding: 10px;
+}
+
+#history-list div:nth-child(even) {
+  background-color: #737780;
+  color: #bbc1cc;
+}
+
+#history-list {
+  bottom: 60px;
+  right: 20px;
+  max-width: 50%;
+  max-height: 50%;
+  overflow-y: scroll;
+  border-radius: 16px;
+}
+
+#username {
+  font-weight: bold;
+}
+
+#timestamp {
+  position: absolute;
+  right: 10px;
+  font-style: italic;
+}
+
+#history-button {
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+}
+
+#threejs-canvas {
+  position: relative;
+  height: 70%;
+  width: 100%;
 }
 
 .user-avatar {
-  background-color: #999;
+  background-color: #6aa9b4;
+  border: 5px solid white;
   border-radius: 50%;
-  height: 64px;
-  width: 64px;
+  height: 80%;
+  width: 80%;
+  max-height: 128px;
+  max-width: 128px;
+}
+
+.focused {
+  background-color: #4a7291;
+  border-width: 10px;
+}
+
+@media only screen and (orientation: landscape) {
+  #app {
+    flex-flow: row;
+  }
+
+  #player-list {
+    flex-direction: column;
+    height: 100%;
+    width: 30%;
+  }
+
+  #threejs-canvas {
+    height: 100%;
+    width: 70%;
+  }
+
+  #history-list {
+    max-height: 70%;
+  }
 }
