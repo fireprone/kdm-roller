@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { ArmorDice } from '../dice';
+import { ArmorDice, TenSidedDice } from '../dice';
 import {
   connectData,
   disconnectData,
@@ -9,6 +9,7 @@ import {
   rollData,
 } from '../types/Message';
 import { priorRoll } from '../types/Roll';
+import CannonDebugger from 'cannon-es-debugger';
 
 const ThreeJsCanvas = ({
   scene,
@@ -78,6 +79,8 @@ const ThreeJsCanvas = ({
       0.1,
       100
     );
+    
+    // const cannonDebugger = new CannonDebugger(scene, world);
 
     camera.position.z = 5;
 
@@ -148,7 +151,14 @@ const ThreeJsCanvas = ({
 
             const initDiceArray = async (array) => {
               for (var i = 0; i < MAX_DICE; i++) {
-                const dice = new ArmorDice();
+                let dice; 
+
+                // if (i < 2) {
+                  dice = new TenSidedDice();
+                // } else {
+                //   dice = new ArmorDice();
+                // }
+
                 await dice.load(playerCollisionGroup);
 
                 dice.mesh.visible = false;
@@ -233,6 +243,8 @@ const ThreeJsCanvas = ({
           }
         });
       }
+
+      // cannonDebugger.update();
 
       renderer.render(scene, camera);
       requestAnimationFrame(render);
