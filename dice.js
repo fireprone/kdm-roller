@@ -24,7 +24,7 @@ loader.load(
 );
 
 export function ArmorDice() {
-  const getTopFaceofDice = (euler) => {
+  const calculateTopFace = (euler) => {
     const eps = 0.1;
     let isZero = (angle) => Math.abs(angle) < eps;
     let isHalfPi = (angle) => Math.abs(angle - 0.5 * Math.PI) < eps;
@@ -32,54 +32,38 @@ export function ArmorDice() {
     let isPiOrMinusPi = (angle) =>
       Math.abs(Math.PI - angle) < eps || Math.abs(Math.PI + angle) < eps;
 
-    if (isZero(euler.y)) {
-      if (isHalfPi(euler.x)) {
+  if (isZero(euler.z)) {
+    if (isZero(euler.x)) {
         return 'BODY 1';
-      } else if (isMinusHalfPi(euler.x)) {
-        return 'BODY 2';
-      } else if (isPiOrMinusPi(euler.x)) {
+    } else if (isHalfPi(euler.x)) {
         return 'LEG';
-      } else if (isZero(euler.x)) {
+    } else if (isMinusHalfPi(euler.x)) {
         return 'WAIST';
-      }
-    } else if (isHalfPi(euler.y)) {
-      if (isHalfPi(euler.z)) {
-        return 'BODY 1';
-      } else if (isZero(euler.z)) {
-        return 'HEAD';
-      }
-    } else if (isMinusHalfPi(euler.y)) {
-      if (isZero(euler.z)) {
-        return 'ARM';
-      }
-    } else if (isPiOrMinusPi(euler.y)) {
-      if (isPiOrMinusPi(euler.x)) {
-        return 'WAIST';
-      } else if (isMinusHalfPi(euler.x)) {
-        return 'BODY 1';
-      } else if (isHalfPi(euler.x)) {
+    } else if (isPiOrMinusPi(euler.x)) {
         return 'BODY 2';
-      } else if (isZero(euler.x)) {
-        return 'LEG';
-      }
     }
+  } else if (isHalfPi(euler.z)) {
+      return 'ARM';
+  } else if (isMinusHalfPi(euler.z)) {
+      return 'HEAD';
+  } 
 
     return null;
   };
 
-  const printTopFaceOfDice = (resolve) => {
+  const getFaceValue = () => {
     this.body.allowSleep = false;
 
     const euler = new CANNON.Vec3();
     this.body.quaternion.toEuler(euler);
 
-    const topFace = getTopFaceofDice(euler);
-    if (topFace == null) {
+    const faceValue = calculateTopFace(euler);
+    if (faceValue == null) {
       this.body.allowSleep = true;
       return;
     }
 
-    resolve(topFace);
+    return faceValue;
   };
 
   this.mesh = null;
@@ -131,68 +115,91 @@ export function ArmorDice() {
       this.body.quaternion.copy(this.mesh.quaternion);
 
       this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
-      this.body.addEventListener('sleep', () => printTopFaceOfDice(resolve));
+      // this.body.addEventListener('sleep', () => printTopFaceOfDice(resolve));
+
+      const onSleep = () => {
+        this.body.removeEventListener('sleep', onSleep);
+        const faceValue = getFaceValue();
+        resolve(faceValue);
+      }
+      this.body.addEventListener('sleep', onSleep);
     });
   };
 }
 
 export function TenSidedDice() {
-  const getTopFaceofDice = (euler) => {
-    const eps = 0.1;
+  const calculateTopFace = (euler) => {
+    const eps = 0.15;
+
     let isZero = (angle) => Math.abs(angle) < eps;
-    let isHalfPi = (angle) => Math.abs(angle - 0.5 * Math.PI) < eps;
-    let isMinusHalfPi = (angle) => Math.abs(0.5 * Math.PI + angle) < eps;
+    let isPiOverFive = (angle) => Math.abs(angle - Math.PI / 5) < eps;
+    let isMinusPiOverFive = (angle) => Math.abs(Math.PI / 5 + angle) < eps;
+    let isPiOverTen = (angle) => Math.abs(angle - Math.PI / 10) < eps;
+    let isMinusPiOverTen = (angle) => Math.abs(Math.PI / 10 + angle) < eps;
+    let isThreePiOverTen = (angle) => Math.abs(angle - 3 * Math.PI / 10) < eps;
+    let isMinusThreePiOverTen = (angle) => Math.abs(3 * Math.PI / 10 + angle) < eps;
     let isPiOrMinusPi = (angle) =>
       Math.abs(Math.PI - angle) < eps || Math.abs(Math.PI + angle) < eps;
 
-    if (isZero(euler.y)) {
-      if (isHalfPi(euler.x)) {
-        return 'BODY 1';
-      } else if (isMinusHalfPi(euler.x)) {
-        return 'BODY 2';
-      } else if (isPiOrMinusPi(euler.x)) {
-        return 'LEG';
-      } else if (isZero(euler.x)) {
-        return 'WAIST';
+    if (isMinusThreePiOverTen(euler.z)) {
+      if (isZero(euler.x)) {
+        return 1;
       }
-    } else if (isHalfPi(euler.y)) {
-      if (isHalfPi(euler.z)) {
-        return 'BODY 1';
-      } else if (isZero(euler.z)) {
-        return 'HEAD';
-      }
-    } else if (isMinusHalfPi(euler.y)) {
-      if (isZero(euler.z)) {
-        return 'ARM';
-      }
-    } else if (isPiOrMinusPi(euler.y)) {
+    }
+    if (isThreePiOverTen(euler.z)) {
       if (isPiOrMinusPi(euler.x)) {
-        return 'WAIST';
-      } else if (isMinusHalfPi(euler.x)) {
-        return 'BODY 1';
-      } else if (isHalfPi(euler.x)) {
-        return 'BODY 2';
-      } else if (isZero(euler.x)) {
-        return 'LEG';
+        return 8;
+      }
+    }
+    if (isPiOverFive(euler.z)) {
+      if (euler.x < 0) {
+        return 3;
+      }
+      if (euler.x > 0) {
+        return 5;
+      }
+    }
+    if (isMinusPiOverFive(euler.z)) {
+      if (euler.x < 0) {
+        return 4;
+      }
+      if (euler.x > 0) {
+        return 6;
+      }
+    }
+    if (isPiOverTen(euler.z)) {
+      if (euler.x > 0) {
+        return 2;
+      }
+      if (euler.x < 0) {
+        return 10;
+      }
+    }
+    if (isMinusPiOverTen(euler.z)) {
+      if (euler.x < 0) {
+        return 7;
+      }
+      if (euler.x > 0) {
+        return 9;
       }
     }
 
     return null;
   };
 
-  const printTopFaceOfDice = (resolve) => {
+  const getFaceValue = () => {
     this.body.allowSleep = false;
 
     const euler = new CANNON.Vec3();
     this.body.quaternion.toEuler(euler);
 
-    const topFace = getTopFaceofDice(euler);
-    if (topFace == null) {
+    const faceValue = calculateTopFace(euler);
+    if (faceValue == null) {
       this.body.allowSleep = true;
       return;
     }
 
-    resolve(topFace);
+    return faceValue;
   };
 
   this.mesh = null;
@@ -285,7 +292,13 @@ export function TenSidedDice() {
       this.body.quaternion.copy(this.mesh.quaternion);
 
       this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
-      this.body.addEventListener('sleep', () => printTopFaceOfDice(resolve));
+
+      const onSleep = () => {
+        this.body.removeEventListener('sleep', onSleep);
+        const faceValue = getFaceValue();
+        resolve(faceValue);
+      }
+      this.body.addEventListener('sleep', onSleep);
     });
   };
 }
