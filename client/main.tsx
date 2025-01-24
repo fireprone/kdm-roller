@@ -9,7 +9,7 @@ import * as CANNON from 'cannon-es';
 const scene = new THREE.Scene();
 const world = new CANNON.World({
   allowSleep: true,
-  gravity: new CANNON.Vec3(0, 0, -50),
+  gravity: new CANNON.Vec3(0, -50, 0),
 });
 world.defaultContactMaterial.restitution = 0.5;
 

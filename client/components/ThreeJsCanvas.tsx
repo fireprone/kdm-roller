@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { ArmorDice } from '../dice';
+import { ArmorDice, TenSidedDice } from '../dice';
 import {
   connectData,
   disconnectData,
@@ -9,6 +9,7 @@ import {
   rollData,
 } from '../types/Message';
 import { priorRoll } from '../types/Roll';
+import CannonDebugger from 'cannon-es-debugger';
 
 const ThreeJsCanvas = ({
   scene,
@@ -67,6 +68,8 @@ const ThreeJsCanvas = ({
         faces: diceRolls,
       };
 
+      console.log('rolled -- ' + currentRoll.faces)
+
       setPriorRolls((prev: priorRoll[]) => [...prev, currentRoll]);
     });
   }
@@ -78,14 +81,17 @@ const ThreeJsCanvas = ({
       0.1,
       100
     );
+    
+    // const cannonDebugger = new CannonDebugger(scene, world);
 
-    camera.position.z = 5;
+    camera.rotation.x = -Math.PI / 2;
+    camera.position.y = 5;
 
     createFloor();
-    createWall(new THREE.Vector2(-5, 0), new THREE.Vector3(0, 1, 0)); // West
-    createWall(new THREE.Vector2(0, 5), new THREE.Vector3(1, 0, 0)); // North
-    createWall(new THREE.Vector2(5, 0), new THREE.Vector3(0, -1, 0)); // East
-    createWall(new THREE.Vector2(0, -5), new THREE.Vector3(-1, 0, 0)); // South
+    createWall(new THREE.Vector3(0, 0, -5), new THREE.Vector3(0, 1, 0), 0); // North
+    createWall(new THREE.Vector3(-5, 0, 0), new THREE.Vector3(0, 1, 0), Math.PI / 2); // West
+    createWall(new THREE.Vector3(5, 0, 0), new THREE.Vector3(0, -1, 0), Math.PI / 2); // East
+    createWall(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 1, 0), Math.PI); // South
     createLights();
 
     const renderer = new THREE.WebGLRenderer();
@@ -148,7 +154,15 @@ const ThreeJsCanvas = ({
 
             const initDiceArray = async (array) => {
               for (var i = 0; i < MAX_DICE; i++) {
-                const dice = new ArmorDice();
+                let dice; 
+
+                //TODO: Let user choose which dice to roll
+                // if (i < 2) {
+                  dice = new TenSidedDice();
+                // } else {
+                  // dice = new ArmorDice();
+                // }
+
                 await dice.load(playerCollisionGroup);
 
                 dice.mesh.visible = false;
@@ -234,6 +248,8 @@ const ThreeJsCanvas = ({
         });
       }
 
+      // cannonDebugger.update();
+
       renderer.render(scene, camera);
       requestAnimationFrame(render);
     }
@@ -246,7 +262,10 @@ const ThreeJsCanvas = ({
         new THREE.MeshStandardMaterial({ color: 0xaa00000 })
       );
       floor.receiveShadow = true;
-      floor.position.z = -5;
+
+      floor.quaternion.setFromAxisAngle(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
+      floor.position.x = 0;
+      floor.position.y = -5;
       scene.add(floor);
 
       // Cannon-es (physical) object
@@ -260,7 +279,7 @@ const ThreeJsCanvas = ({
       world.addBody(floorBody);
     }
 
-    function createWall(position, axis) {
+    function createWall(position, axis, rotation) {
       const wallShadow = new THREE.MeshStandardMaterial({ color: 0x777777 });
 
       const wallMesh: any = new THREE.Mesh(
@@ -271,8 +290,9 @@ const ThreeJsCanvas = ({
       wallMesh.receiveShadow = true;
       wallMesh.position.x = position.x;
       wallMesh.position.y = position.y;
+      wallMesh.position.z = position.z;
 
-      wallMesh.quaternion.setFromAxisAngle(axis, Math.PI / 2);
+      wallMesh.quaternion.setFromAxisAngle(axis, rotation);
       scene.add(wallMesh);
 
       // Cannon-es (physical) object
@@ -287,10 +307,10 @@ const ThreeJsCanvas = ({
     }
 
     function createLights() {
-      const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa);
-      scene.add(hemisphereLight);
+      // const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa);
+      // scene.add(hemisphereLight);
 
-      const pointLight = new THREE.PointLight(0xffffff, 50, 10);
+      const pointLight = new THREE.PointLight(0xffffff, 50, 20);
       scene.add(pointLight);
     }
   }
