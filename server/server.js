@@ -110,8 +110,8 @@ function calculateRolls(numberOfDice) {
   for (let i = 0; i < numberOfDice; i++) {
     const rotation = {
       x: 2 * Math.PI * Math.random(),
-      y: 0,
-      z: 2 * Math.PI * Math.random(),
+      y: 2 * Math.PI * Math.random(),
+      z: 0,
     };
     const force = 3 + 5 * Math.random();
 
