@@ -94,7 +94,7 @@ const ThreeJsCanvas = ({
     createWall(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 1, 0), Math.PI); // South
     createLights();
 
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(ref.current.offsetWidth, ref.current.offsetHeight);
 
     window.addEventListener('resize', () => {
@@ -255,11 +255,10 @@ const ThreeJsCanvas = ({
     }
 
     function createFloor() {
-      // Three.js (visible) object
+      const shadowMaterial = new THREE.ShadowMaterial();
       const floor: any = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
-        // @ts-ignore
-        new THREE.MeshStandardMaterial({ color: 0xaa00000 })
+        shadowMaterial
       );
       floor.receiveShadow = true;
 
@@ -280,12 +279,12 @@ const ThreeJsCanvas = ({
     }
 
     function createWall(position, axis, rotation) {
-      const wallShadow = new THREE.MeshStandardMaterial({ color: 0x777777 });
+      const wallMaterial = new THREE.ShadowMaterial();
 
       const wallMesh: any = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 10),
+        new THREE.PlaneGeometry(15, 15),
         // @ts-ignore
-        wallShadow
+        wallMaterial
       );
       wallMesh.receiveShadow = true;
       wallMesh.position.x = position.x;
@@ -307,11 +306,8 @@ const ThreeJsCanvas = ({
     }
 
     function createLights() {
-      // const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa);
-      // scene.add(hemisphereLight);
-
-      const pointLight = new THREE.PointLight(0xffffff, 50, 20);
-      scene.add(pointLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff);
+      scene.add(directionalLight);
     }
   }
 
