@@ -4,6 +4,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   envDir: '../',
   server: {
+    fs: {
+      strict: false,
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
