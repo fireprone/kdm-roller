@@ -5,6 +5,7 @@ import RollHistory from './components/RollHistory';
 import Players from './components/Players';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import LoadoutSection from './components/LoadoutSection/LoadoutSection';
 
 const scene = new THREE.Scene();
 const world = new CANNON.World({
@@ -22,8 +23,12 @@ const App = () => {
 
   return (
     <>
-      <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} />
-      <RollHistory {...{ priorRolls }} />
+      {/* <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} /> */}
+     <LoadoutSection 
+     isShowingCardsTray={false}
+     isShowingDiceTray={false}
+     /> 
+
       <ThreeJsCanvas
         {...{
           scene,
@@ -34,6 +39,7 @@ const App = () => {
           setPriorRolls,
         }}
       />
+      <RollHistory {...{ priorRolls }} />
     </>
   );
 };
