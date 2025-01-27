@@ -283,7 +283,7 @@ export function TenSidedDice() {
     return new Promise((resolve) => {
       numberOfDiceRolling++;
       this.body.allowSleep = true;
-      this.body.position = new CANNON.Vec3(5, 0, 0);
+      this.body.position = new CANNON.Vec3(0, 0, -5);
 
       this.body.velocity.setZero();
       this.body.angularVelocity.setZero();
@@ -291,13 +291,13 @@ export function TenSidedDice() {
       this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
       this.body.quaternion.copy(this.mesh.quaternion);
 
-      this.body.applyImpulse(new CANNON.Vec3(-force, force, 0));
+      this.body.applyImpulse(new CANNON.Vec3(0, -force, 0));
 
       const onSleep = () => {
-        this.body.removeEventListener('sleep', onSleep);
         const faceValue = getFaceValue();
         resolve(faceValue);
       }
+      this.body.removeEventListener('sleep', onSleep);
       this.body.addEventListener('sleep', onSleep);
     });
   };
