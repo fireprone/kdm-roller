@@ -35,7 +35,7 @@ const LoadoutSection = (props) => {
     cell8 = useRef(null);
   const cells = [cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8];
   const sectionRef = useRef(null);
-  const removalRef = useRef(null);
+  // const removalRef = useRef(null);
 
   const controls = useDragControls();
 
@@ -69,11 +69,11 @@ const LoadoutSection = (props) => {
       return;
     }
 
-    if (info.point.y < removalRef.current.clientHeight) {
-      activeCard.classList.add('removable');
-    } else {
-      activeCard.classList.remove('removable');
-    }
+    // if (info.point.y < removalRef.current.clientHeight) {
+    //   activeCard.classList.add('removable');
+    // } else {
+    //   activeCard.classList.remove('removable');
+    // }
   };
 
   const dragEnd = (event, info) => {
@@ -137,7 +137,7 @@ const LoadoutSection = (props) => {
         />
       </motion.div>
       <section id='grid-section'>
-        <div id='card-removal' ref={removalRef}></div>
+        {/* <div id='card-removal' ref={removalRef}></div> */}
         <LoadoutGrid
           cells={cells}
           gridArray={gridArray}
