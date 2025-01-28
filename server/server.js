@@ -82,13 +82,12 @@ wss.on('connection', (ws, req) => {
         broadcast({ action: 'connect', data: usersConnected });
         break;
       case 'roll':
-        const numberOfDice = Number(message.data);
-        const rolls = calculateRolls(numberOfDice);
+        const rolls = calculateRolls(message.data.numberOfDice);
         const timestamp = new Date();
 
         broadcast({
           action: 'roll',
-          data: { username: ws.username, rolls, timestamp },
+          data: { username: ws.username, rolls, timestamp, type: message.data.type },
         });
         break;
       default:

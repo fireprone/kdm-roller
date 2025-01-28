@@ -5,6 +5,7 @@ export type rollData = {
     force: Number;
   }[];
   timestamp: Date;
+  type: string;
 };
 
 export type connectData = string[];
