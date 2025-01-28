@@ -14,6 +14,8 @@ import CannonDebugger from 'cannon-es-debugger';
 let armorDiceArray = [];
 let d10DiceArray = [];
 
+let sendRolledResults = (result) => {};
+
 const ThreeJsCanvas = ({
   scene,
   world,
@@ -73,11 +75,54 @@ const ThreeJsCanvas = ({
 
       console.log('rolled -- ' + currentRoll.faces)
 
-      setPriorRolls((prev: priorRoll[]) => [...prev, currentRoll]);
+      sendRolledResults(currentRoll);
     });
   }
 
   function initialize() {
+
+    const initArmorDiceArray = async () => {
+      const array = [];
+
+      for (var i = 0; i < MAX_DICE; i++) {
+        const dice = new ArmorDice();
+
+        await dice.load(1);
+
+        dice.mesh.visible = false;
+
+        scene.add(dice.mesh);
+        array.push(dice);
+      }
+
+      return array;
+    };
+
+    const initD10Array = async () => {
+      const array = [];
+
+      for (var i = 0; i < MAX_DICE; i++) {
+        const dice = new TenSidedDice(); 
+
+        await dice.load(2);
+
+        dice.mesh.visible = false;
+
+        scene.add(dice.mesh);
+        array.push(dice);
+      }
+
+      return array;
+    };
+
+    initArmorDiceArray().then((array) => {
+      armorDiceArray = array;
+    })
+
+    initD10Array().then((array) => {
+      d10DiceArray = array;
+    });
+
     const camera: any = new THREE.PerspectiveCamera(
       75,
       ref.current.offsetWidth / ref.current.offsetHeight,
@@ -139,94 +184,12 @@ const ThreeJsCanvas = ({
 
           // Initialize remaining players
           newPlayers.forEach((playerName) => {
-            const diceArray = [];
-
-            // Ensure collision group is not already assigned to another player
-            let playerCollisionGroup;
-            let count = 1;
-            for (const name in players.current) {
-              const newCollisionGroup = count * 2;
-
-              if (players.current[name].collisionGroup !== newCollisionGroup) {
-                playerCollisionGroup = newCollisionGroup;
-                break;
-              }
-
-              count++;
-            }
-
-            const initArmorDiceArray = async () => {
-              const array = [];
-
-              for (var i = 0; i < MAX_DICE; i++) {
-                const dice = new ArmorDice();
-
-                await dice.load(playerCollisionGroup);
-
-                dice.mesh.visible = false;
-                if (playerName !== selfUsername) {
-                  dice.mesh.material.opacity = 0.2;
-                  dice.mesh.material.transparent = true;
-                }
-
-                scene.add(dice.mesh);
-                array.push(dice);
-              }
-
-              return array;
-            };
-
-            const initD10Array = async () => {
-              const array = [];
-
-              for (var i = 0; i < MAX_DICE; i++) {
-                const dice = new TenSidedDice(); 
-
-                await dice.load(playerCollisionGroup);
-
-                dice.mesh.visible = false;
-                if (playerName !== selfUsername) {
-                  dice.mesh.material.opacity = 0.2;
-                  dice.mesh.material.transparent = true;
-                }
-
-                scene.add(dice.mesh);
-                array.push(dice);
-              }
-
-              return array;
-            };
-
-            players.current = {
-              ...players.current,
-              [playerName]: { dice: [], collisionGroup: playerCollisionGroup },
-            };
-
             setPlayerList(Object.keys(players.current));
-
-            initArmorDiceArray().then((array) => {
-              armorDiceArray = array;
-            })
-
-            initD10Array().then((array) => {
-              // players.current[playerName].dice = array;
-              d10DiceArray = array;
-            });
           });
           break;
         case 'disconnect':
           const playerName = (message.data as disconnectData).username;
           console.debug(`${playerName} disconnected`);
-
-          const playerDicePool = players.current[playerName].dice;
-
-          for (let i = 0; i < playerDicePool.length; i++) {
-            playerDicePool[i].mesh.material.dispose();
-            playerDicePool[i].mesh.geometry.dispose();
-
-            scene.remove(playerDicePool[i].mesh);
-            world.removeBody(playerDicePool[i].body);
-          }
 
           delete players.current[playerName];
 
@@ -238,16 +201,18 @@ const ThreeJsCanvas = ({
           break;
         case 'roll':
           const { username, type, rolls, timestamp } = message.data as rollData;
+          let diceArray;
 
           if (type === 'd10') {
-            players.current[username].dice = d10DiceArray;
+            diceArray = d10DiceArray;
           } else {
-            players.current[username].dice = armorDiceArray;
+            diceArray = armorDiceArray;
           }
 
-          const playerDice = players.current[username].dice;
-          rollDice(username, playerDice, rolls, timestamp, type);
-
+          rollDice(username, diceArray, rolls, timestamp, type);
+          break;
+        case 'rolled':
+          setPriorRolls((prev: priorRoll[]) => [...prev, message.data]);
           break;
         default:
           console.error(`action (${message.action}) not recognized`);
@@ -264,19 +229,28 @@ const ThreeJsCanvas = ({
       }
     };
 
-    // setRollDiceCallback(() => (number) => rollDice(number));
+    sendRolledResults = (result) => {
+      if (websocket.readyState === websocket.OPEN) {
+        websocket.send(JSON.stringify({ action: 'rolled', data: result}));
+      }
+    }
 
     function render() {
       world.fixedStep();
 
-      for (const name in players.current) {
-        players.current[name].dice.forEach((dice) => {
-          if (dice.mesh) {
+      armorDiceArray.forEach((dice: { mesh, body }) => {
+        if (dice.mesh) {
             dice.mesh.position.copy(dice.body.position);
             dice.mesh.quaternion.copy(dice.body.quaternion);
-          }
-        });
-      }
+        }
+      });
+
+      d10DiceArray.forEach((dice: { mesh, body }) => {
+        if (dice.mesh) {
+            dice.mesh.position.copy(dice.body.position);
+            dice.mesh.quaternion.copy(dice.body.quaternion);
+        }
+      });
 
       // cannonDebugger.update();
 
@@ -288,6 +262,7 @@ const ThreeJsCanvas = ({
       const shadowMaterial = new THREE.ShadowMaterial();
       const floor: any = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
+        // @ts-ignore
         shadowMaterial
       );
       floor.receiveShadow = true;
@@ -338,6 +313,9 @@ const ThreeJsCanvas = ({
     function createLights() {
       const directionalLight = new THREE.DirectionalLight(0xffffff);
       scene.add(directionalLight);
+
+      const pointLight = new THREE.PointLight(0xffffff, 50, 50);
+      scene.add(pointLight);
     }
   }
 
