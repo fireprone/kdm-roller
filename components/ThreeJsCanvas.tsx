@@ -11,6 +11,9 @@ import {
 import { priorRoll } from '../types/Roll';
 import CannonDebugger from 'cannon-es-debugger';
 
+let armorDiceArray = [];
+let d10DiceArray = [];
+
 const ThreeJsCanvas = ({
   scene,
   world,
@@ -44,7 +47,7 @@ const ThreeJsCanvas = ({
     }
   }, [focusedPlayer]);
 
-  async function rollDice(username: string, playerDice, rolls, timestamp) {
+  async function rollDice(username: string, playerDice, rolls, timestamp, type: string) {
     const ongoingRolls: Promise<string>[] = [];
 
     console.log(username + ' rolled');
@@ -152,16 +155,32 @@ const ThreeJsCanvas = ({
               count++;
             }
 
-            const initDiceArray = async (array) => {
-              for (var i = 0; i < MAX_DICE; i++) {
-                let dice; 
+            const initArmorDiceArray = async () => {
+              const array = [];
 
-                //TODO: Let user choose which dice to roll
-                // if (i < 2) {
-                  dice = new TenSidedDice();
-                // } else {
-                  // dice = new ArmorDice();
-                // }
+              for (var i = 0; i < MAX_DICE; i++) {
+                const dice = new ArmorDice();
+
+                await dice.load(playerCollisionGroup);
+
+                dice.mesh.visible = false;
+                if (playerName !== selfUsername) {
+                  dice.mesh.material.opacity = 0.2;
+                  dice.mesh.material.transparent = true;
+                }
+
+                scene.add(dice.mesh);
+                array.push(dice);
+              }
+
+              return array;
+            };
+
+            const initD10Array = async () => {
+              const array = [];
+
+              for (var i = 0; i < MAX_DICE; i++) {
+                const dice = new TenSidedDice(); 
 
                 await dice.load(playerCollisionGroup);
 
@@ -185,8 +204,13 @@ const ThreeJsCanvas = ({
 
             setPlayerList(Object.keys(players.current));
 
-            initDiceArray(diceArray).then((array) => {
-              players.current[playerName].dice = array;
+            initArmorDiceArray().then((array) => {
+              armorDiceArray = array;
+            })
+
+            initD10Array().then((array) => {
+              // players.current[playerName].dice = array;
+              d10DiceArray = array;
             });
           });
           break;
@@ -213,10 +237,16 @@ const ThreeJsCanvas = ({
           setPlayerList(Object.keys(players.current));
           break;
         case 'roll':
-          const { username, rolls, timestamp } = message.data as rollData;
-          const playerDice = players.current[username].dice;
+          const { username, type, rolls, timestamp } = message.data as rollData;
 
-          rollDice(username, playerDice, rolls, timestamp);
+          if (type === 'd10') {
+            players.current[username].dice = d10DiceArray;
+          } else {
+            players.current[username].dice = armorDiceArray;
+          }
+
+          const playerDice = players.current[username].dice;
+          rollDice(username, playerDice, rolls, timestamp, type);
 
           break;
         default:
@@ -224,17 +254,17 @@ const ThreeJsCanvas = ({
       }
     };
 
-    window.addEventListener('keydown', async (event) => {
-      const numberOfDice = Number(event.key);
-      console.debug(numberOfDice);
+    window.rollDiceCallback = (type: string, numberOfDice: number) => {
       if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
         return;
       }
 
       if (websocket.readyState === websocket.OPEN) {
-        websocket.send(JSON.stringify({ action: 'roll', data: numberOfDice }));
+        websocket.send(JSON.stringify({ action: 'roll', data: { type, numberOfDice }}));
       }
-    });
+    };
+
+    // setRollDiceCallback(() => (number) => rollDice(number));
 
     function render() {
       world.fixedStep();

@@ -1,0 +1,17 @@
+#dice-chooser {
+    position: absolute;
+    /* display: inline; */
+    left: 20%;
+    bottom: 0;
+    color: blue;
+    margin: 1rem;
+}
+
+#dice-chooser input {
+    width: 2rem;
+}
+
+#dice-chooser button {
+    width: 10rem;
+    margin: 1rem;
+}

@@ -23,6 +23,10 @@ img {
   background-color: #171522;
 }
 
+#grid-section {
+  transform: translate(0, 30%);
+}
+
 #history-list,
 #history-button {
   position: absolute;
@@ -75,7 +79,7 @@ img {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 0;
   pointer-events: none;
   height: 100%;
   width: 100%;
