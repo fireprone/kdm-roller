@@ -49,21 +49,23 @@ const ThreeJsCanvas = ({
     }
   }, [focusedPlayer]);
 
-  async function rollDice(username: string, playerDice, rolls, timestamp, type: string) {
+  async function rollDice(username: string, diceToRoll, diceNotBeingRolled, rolls, timestamp, type: string) {
     const ongoingRolls: Promise<string>[] = [];
 
     console.log(username + ' rolled');
 
-    for (let i = 0; i < playerDice.length; i++) {
+    for (let i = 0; i < diceToRoll.length; i++) {
       if (i < rolls.length) {
-        playerDice[i].mesh.visible = true;
-        world.addBody(playerDice[i].body);
-        const resultPromise = playerDice[i].roll(rolls[i]);
+        diceToRoll[i].mesh.visible = true;
+        world.addBody(diceToRoll[i].body);
+        const resultPromise = diceToRoll[i].roll(rolls[i]);
         ongoingRolls.push(resultPromise);
       } else {
-        playerDice[i].mesh.visible = false;
-        world.removeBody(playerDice[i].body);
+        diceToRoll[i].mesh.visible = false;
+        world.removeBody(diceToRoll[i].body);
       }
+
+      diceNotBeingRolled[i].mesh.visible = false;
     }
 
     Promise.all(ongoingRolls).then((diceRolls) => {
@@ -201,15 +203,18 @@ const ThreeJsCanvas = ({
           break;
         case 'roll':
           const { username, type, rolls, timestamp } = message.data as rollData;
-          let diceArray;
+          let diceToRoll;
+          let diceNotBeingRolled;
 
           if (type === 'd10') {
-            diceArray = d10DiceArray;
+            diceToRoll = d10DiceArray;
+            diceNotBeingRolled = armorDiceArray;
           } else {
-            diceArray = armorDiceArray;
+            diceToRoll = armorDiceArray;
+            diceNotBeingRolled = d10DiceArray;
           }
 
-          rollDice(username, diceArray, rolls, timestamp, type);
+          rollDice(username, diceToRoll, diceNotBeingRolled, rolls, timestamp, type);
           break;
         case 'rolled':
           setPriorRolls((prev: priorRoll[]) => [...prev, message.data]);
