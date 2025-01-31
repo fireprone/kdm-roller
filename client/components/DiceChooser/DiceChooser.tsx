@@ -7,7 +7,10 @@ const DiceChooser = () => {
   return (
     <div id='dice-chooser'>
         <button onClick={() => window.rollDiceCallback('armor', numberOfDice)}>Armor Dice</button>
-        <input type='textbox' maxLength='1' value={numberOfDice}
+        <input type='textbox' maxLength='1' value={numberOfDice} 
+          onChange={(e) => {
+            setNumberOfDice(Number(e.key));
+          }}
           onKeyDown={(e) => {
             if (isNaN(Number(e.key))) {
               return;
