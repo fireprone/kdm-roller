@@ -1,5 +1,5 @@
 body {
-  background-color: gray; 
+  background-color: #222; 
 }
 
 img {
@@ -75,6 +75,8 @@ img {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10;
+  pointer-events: none;
   height: 100%;
   width: 100%;
 }
@@ -107,7 +109,7 @@ img {
 
   #threejs-canvas {
     height: 100%;
-    width: 70%;
+    width: 100%;
   }
 
   #history-list {
