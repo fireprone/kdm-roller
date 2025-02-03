@@ -82,7 +82,6 @@ wss.on('connection', (ws, req) => {
         broadcast({ action: 'connect', data: usersConnected });
         break;
       case 'roll':
-        //TODO: Clear rolls
         const rolls = calculateRolls(message.data.numberOfDice);
         const timestamp = new Date();
 
