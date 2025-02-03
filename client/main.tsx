@@ -6,6 +6,7 @@ import Players from './components/Players';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import LoadoutSection from './components/LoadoutSection/LoadoutSection';
+import DiceChooser from './components/DiceChooser/DiceChooser';
 
 const scene = new THREE.Scene();
 const world = new CANNON.World({
@@ -39,6 +40,7 @@ const App = () => {
           setPriorRolls,
         }}
       />
+      <DiceChooser />
       <RollHistory {...{ priorRolls }} />
     </>
   );

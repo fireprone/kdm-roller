@@ -82,14 +82,20 @@ wss.on('connection', (ws, req) => {
         broadcast({ action: 'connect', data: usersConnected });
         break;
       case 'roll':
-        const numberOfDice = Number(message.data);
-        const rolls = calculateRolls(numberOfDice);
+        const rolls = calculateRolls(message.data.numberOfDice);
         const timestamp = new Date();
 
-        broadcast({
-          action: 'roll',
-          data: { username: ws.username, rolls, timestamp },
+        wss.clients.forEach((client) => {
+          if (ws === client && client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              action: 'roll',
+              data: { username: ws.username, rolls, timestamp, type: message.data.type },
+            }));
+          }
         });
+        break;
+      case 'rolled':
+        broadcast({ action: 'rolled', data: message.data}) 
         break;
       default:
         console.log(`action (${message.action}) not recognized`);
