@@ -53,6 +53,7 @@ img {
 #history-list {
   bottom: 60px;
   right: 20px;
+  min-width: 12rem;
   max-width: 50%;
   max-height: 50%;
   overflow-y: scroll;
