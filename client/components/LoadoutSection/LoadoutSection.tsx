@@ -109,11 +109,11 @@ const LoadoutSection = (props) => {
 
   return (
     <div id='loadout-view' ref={sectionRef}>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {focusedCard.name && (
           <Overlay focusedCard={focusedCard} setFocusedCard={setFocusedCard} />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
       <motion.div
         drag
         layout

@@ -1,7 +1,5 @@
 #dice-chooser {
     position: absolute;
-    /* display: inline; */
-    left: 30vw;
     bottom: 0;
     color: blue;
     margin: 1rem;
