@@ -7,8 +7,8 @@ const LoadoutCard = ({
   whileHover,
   whileTap,
   onTapStart,
+  onTap,
   name,
-  clickListener,
   classes,
 }) => {
   const [cardInfo, setCardInfo] = useState({ image: '', origin: '' });
@@ -26,11 +26,9 @@ const LoadoutCard = ({
       whileTap={whileTap}
       whileHover={whileHover}
       onTapStart={onTapStart}
+      onTap={onTap}
       className={name + ' card' + (classes ? ` ${classes}` : '')}
       style={style}
-      onTap={() =>
-        clickListener ? clickListener({ name: name, ...cardInfo }) : true
-      }
       layout
     ></motion.div>
   );

@@ -1,6 +1,6 @@
 import './LoadoutGrid.css';
 import Cell from '../Cell/Cell';
-// import { AnimateSharedLayout } from 'motion/react';
+import { motion } from 'motion/react';
 import React from 'react';
 
 const LoadoutGrid = ({
@@ -12,10 +12,10 @@ const LoadoutGrid = ({
   dragActive,
   dragEnd,
   clickListener,
+  setOverlayIndex,
   dragConstraints,
 }) => {
   return (
-    // <AnimateSharedLayout>
       <div id='loadout-grid'>
         {cells.map((cell, i) => (
           <Cell
@@ -24,6 +24,7 @@ const LoadoutGrid = ({
             key={`cell-${i}`}
             onTapStart={tapStart}
             clickListener={clickListener}
+            setOverlayIndex={setOverlayIndex}
             dragStart={dragStart}
             dragActive={dragActive}
             dragEnd={dragEnd}
@@ -33,7 +34,6 @@ const LoadoutGrid = ({
           />
         ))}
       </div>
-    // </AnimateSharedLayout>
   );
 };
 

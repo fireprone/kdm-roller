@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import TermsList from '../TermsList/TermsList';
 import { motion } from 'motion/react';
+import cardInfo from '../../data/cardInfo';
 
-const Overlay = ({ focusedCard, setFocusedCard }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
+const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
+  console.log(cardInfo)
   return (
     <motion.div
       id='Overlay'
@@ -18,37 +18,40 @@ const Overlay = ({ focusedCard, setFocusedCard }) => {
         marginTop: { type: 'tween', duration: 0.3 },
       }}
     >
-      <div id='card-preview'>
-        <motion.div
-          id='flip-card'
-          className={isFlipped ? 'is-flipped' : ''}
-          onTap={() => setIsFlipped(!isFlipped)}
-          initial={{ marginTop: 0 }}
-          animate={{ marginTop: '2rem' }}
-        >
-          <LoadoutCard
-            whileTap={{ scale: 1.1 }}
-            name={focusedCard.name}
-            classes='card-front'
-          />
-          <LoadoutCard
-            whileTap={{ scale: 1.1 }}
-            name={focusedCard.Origin}
-            classes='card-back'
-          />
-        </motion.div>
-        {focusedCard.Terms && focusedCard.Terms.length ? (
-          <TermsList terms={focusedCard.Terms} />
-        ) : (
-          ''
-        )}
+      <div id='overlay-list'>
+        {Object.keys(cardInfo).map((card, index) => {
+          return (
+            <div className='overlay-content'>
+              <LoadoutCard
+                key={index}
+                onTapStart={() => {
+                  setGridArray((previous) => {
+                    const newArray = {...previous};
+                    newArray[overlayIndex] = card.toLocaleLowerCase();
+                    return newArray;
+                  });
+
+                  setIsOverlayOpen(false);
+                }} 
+                name={card.toLocaleLowerCase()}
+              />
+            </div>
+          );
+        })}
       </div>
       <motion.div
         id='overlay-bg'
-        onTap={() => {
-          setFocusedCard({ name: '', origin: '' });
+        onClick={() => {
+          setGridArray((previous) => {
+            const newArray = {...previous};
+            newArray[overlayIndex] = null;
+
+            return newArray;
+          });
+          setIsOverlayOpen(false);
         }}
-      ></motion.div>
+      >
+      </motion.div>
     </motion.div>
   );
 };
