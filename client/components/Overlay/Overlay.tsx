@@ -26,7 +26,7 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
                 key={index}
                 onTapStart={() => {
                   setGridArray((previous) => {
-                    const newArray = {...previous};
+                    const newArray = [...previous];
                     newArray[overlayIndex] = card.toLocaleLowerCase();
                     return newArray;
                   });
@@ -43,7 +43,7 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
         id='overlay-bg'
         onClick={() => {
           setGridArray((previous) => {
-            const newArray = {...previous};
+            const newArray = [...previous];
             newArray[overlayIndex] = null;
 
             return newArray;

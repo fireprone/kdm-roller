@@ -3,7 +3,7 @@ import LoadoutGrid from '../LoadoutGrid/LoadoutGrid';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { AnimatePresence, motion, useDragControls } from 'motion/react';
 import Overlay from '../Overlay/Overlay';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 
 // TODO: Clone card on drag instead of removing from list
@@ -12,7 +12,8 @@ const LoadoutSection = (props) => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const [currentDraggingCard, setCurrentDraggingCard] = useState('');
-  const [gridArray, setGridArray] = useState([
+
+  let defaultGrid = [
     null,
     null,
     null,
@@ -22,7 +23,12 @@ const LoadoutSection = (props) => {
     null,
     null,
     null,
-  ]);
+  ];
+  const gridInSession = sessionStorage.getItem('gearGrid');
+  if (gridInSession) {
+    defaultGrid = JSON.parse(gridInSession);
+  }
+  const [gridArray, setGridArray] = useState(defaultGrid);
 
   const cell0 = useRef(null),
     cell1 = useRef(null),
@@ -40,6 +46,11 @@ const LoadoutSection = (props) => {
   // const removalRef = useRef(null);
 
   const controls = useDragControls();
+
+  useEffect(() => {
+    //Save grid
+    sessionStorage.setItem('gearGrid', JSON.stringify(gridArray));
+  }, [gridArray]);
 
   const startGearCardDrag = (event, cardName) => {
     controls.start(event, { snapToCursor: true });
