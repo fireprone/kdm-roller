@@ -22,7 +22,7 @@ const Cell = forwardRef(
     ref
   ) => {
     return (
-      <motion.div
+      <div
         id={index}
         ref={ref}
         className='loadout-space'
@@ -35,13 +35,13 @@ const Cell = forwardRef(
             onDragStart={dragStart}
             onDrag={dragActive}
             onDragEnd={dragEnd}
-            dragElastic={0}
+            dragElastic={1}
             dragSnapToOrigin
             dragConstraints={dragConstraints}
+            whileTap={{ scale: 1.2 }}
             layout
           >
             <LoadoutCard
-              whileTap={{ scale: 1.2 }}
               onTapStart={onTapStart}
               onTap={() => {
                 setOverlayIndex(index);
@@ -56,7 +56,7 @@ const Cell = forwardRef(
             clickListener && clickListener(true);
           }} />
         )}
-      </motion.div>
+      </div>
     );
   }
 );

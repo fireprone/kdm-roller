@@ -1,12 +1,10 @@
 import './Overlay.css';
-import React, { useState } from 'react';
+import React from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
-import TermsList from '../TermsList/TermsList';
 import { motion } from 'motion/react';
 import cardInfo from '../../data/cardInfo';
 
 const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
-  console.log(cardInfo)
   return (
     <motion.div
       id='Overlay'
@@ -21,9 +19,8 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
       <div id='overlay-list'>
         {Object.keys(cardInfo).map((card, index) => {
           return (
-            <div className='overlay-content'>
+            <div key={index} className='overlay-content'>
               <LoadoutCard
-                key={index}
                 onTapStart={() => {
                   setGridArray((previous) => {
                     const newArray = [...previous];

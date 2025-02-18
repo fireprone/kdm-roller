@@ -1,6 +1,5 @@
 import './LoadoutGrid.css';
 import Cell from '../Cell/Cell';
-import { motion } from 'motion/react';
 import React from 'react';
 
 const LoadoutGrid = ({
@@ -8,7 +7,6 @@ const LoadoutGrid = ({
   gridArray,
   activeIndex,
   tapStart,
-  dragStart,
   dragActive,
   dragEnd,
   clickListener,
@@ -25,7 +23,6 @@ const LoadoutGrid = ({
             onTapStart={tapStart}
             clickListener={clickListener}
             setOverlayIndex={setOverlayIndex}
-            dragStart={dragStart}
             dragActive={dragActive}
             dragEnd={dragEnd}
             ref={cell}

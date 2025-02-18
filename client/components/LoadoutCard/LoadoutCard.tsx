@@ -4,8 +4,6 @@ import CardProvider from '../../utils/CardProvider';
 import { motion } from 'motion/react';
 
 const LoadoutCard = ({
-  whileHover,
-  whileTap,
   onTapStart,
   onTap,
   name,
@@ -23,13 +21,10 @@ const LoadoutCard = ({
 
   return (
     <motion.div
-      whileTap={whileTap}
-      whileHover={whileHover}
       onTapStart={onTapStart}
       onTap={onTap}
       className={name + ' card' + (classes ? ` ${classes}` : '')}
       style={style}
-      layout
     ></motion.div>
   );
 };
