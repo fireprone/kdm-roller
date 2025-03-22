@@ -11,24 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Go to client folder
-        run: cd client
-
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          working-directory: client
 
       - name: Setup Node
         uses: actions/setup-node@v3
+        with:
+          working-directory: client
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
+        with:
+          working-directory: client
 
       - name: Build project
         run: npm run build
+        working-directory: client
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
+          working-directory: client
           name: production-files
           path: ./dist
 
@@ -39,17 +44,16 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Go to client folder
-        run: cd client
-
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
+          working-directory: client
           name: production-files
           path: ./dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
+          working-directory: client
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
