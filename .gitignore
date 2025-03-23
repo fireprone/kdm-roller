@@ -28,6 +28,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Models (ignoring for now)
-client/models/*
