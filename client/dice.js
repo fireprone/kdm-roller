@@ -1,14 +1,15 @@
 import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import armorDiceModel from './models/armor-dice.glb';
+import d10Model from './models/d10.glb';
 
 const loader = new GLTFLoader();
-const isDiscord = location.host.includes('discord');
 let armorDiceMesh = null;
 let tenSidedDiceMesh = null;
 let numberOfDiceRolling = 0;
 
 loader.load(
-  `.${isDiscord ? '/.proxy' : ''}/models/armor-dice.glb`,
+  armorDiceModel,
   function (gltf) {
     armorDiceMesh = gltf.scene.children[0];
     window.dispatchEvent(new Event('loadedArmorDiceMesh'));
@@ -16,7 +17,7 @@ loader.load(
 );
 
 loader.load(
-  `.${isDiscord ? '/.proxy' : ''}/models/d10.glb`,
+  d10Model,
   function (gltf) {
     tenSidedDiceMesh = gltf.scene.children[0];
     window.dispatchEvent(new Event('loadedTenSidedDiceMesh'));
