@@ -155,18 +155,13 @@ const ThreeJsCanvas = ({
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 
-    const isDiscord = location.host.includes('discord');
-    const wsProtocol = isDiscord ? 'wss' : 'ws';
+    const localSocket = `ws://${location.hostname}:3001/api`;
+    const hostedSocket = `wss://kdm-roller.onrender.com/api`;
     const websocket = new WebSocket(
-      `${wsProtocol}://${location.host}${isDiscord ? '/.proxy' : ''}/api`
+      window.location.protocol === 'https:' ? hostedSocket : localSocket
     );
 
-    let selfUsername;
-    if (isDiscord) {
-      selfUsername = '';
-    }
-
-    selfUsername = 'User#' + Math.floor(Math.random() * 100);
+    const selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
     websocket.onopen = () => {
       websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
