@@ -3,6 +3,8 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig({
   envDir: '../',
+  base: '/kdm-roller/',
+  assetsInclude: ['**/*.glb'],
   server: {
     fs: {
       strict: false,
