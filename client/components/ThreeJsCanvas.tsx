@@ -28,6 +28,8 @@ const ThreeJsCanvas = ({
   const ref = useRef(null);
   const players = useRef({});
 
+  let timeoutIdForHidingDice;
+
   useEffect(() => {
     initialize();
   }, []);
@@ -49,9 +51,16 @@ const ThreeJsCanvas = ({
     }
   }, [focusedPlayer]);
 
-  async function rollDice(username: string, diceToRoll, diceNotBeingRolled, rolls, timestamp, type: string) {
-    const ongoingRolls: Promise<string>[] = [];
+  function hideDice() {
+    armorDiceArray.forEach((dice: { mesh, body }) => {
+      dice.mesh.visible = false;
+    });
+  }
 
+  async function rollDice(username: string, diceToRoll, diceNotBeingRolled, rolls, timestamp, type: string) {
+    clearTimeout(timeoutIdForHidingDice);
+
+    const ongoingRolls: Promise<string>[] = [];
     console.log(username + ' rolled');
 
     for (let i = 0; i < diceToRoll.length; i++) {
@@ -75,9 +84,11 @@ const ThreeJsCanvas = ({
         faces: diceRolls,
       };
 
-      console.log('rolled -- ' + currentRoll.faces)
+      console.log('rolled -- ' + currentRoll.faces);
 
       sendRolledResults(currentRoll);
+
+      timeoutIdForHidingDice = setTimeout(hideDice, 5000);
     });
   }
 
