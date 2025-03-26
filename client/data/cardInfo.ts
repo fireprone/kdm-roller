@@ -23,10 +23,13 @@ import spearOfLife from '../img/Chorosseum/spear-of-life.png';
 import stoneNoses from '../img/OrganGrinder/stone-noses.png';
 import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
 import monsterGrease from '../img/OrganGrinder/monster-grease.png';
+import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
 // import crimsonBow from '../img/Crockery/crimson-bow.png';
 // import crocodileyes from '../img/Crockery/crocodileyes.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
+
+import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 
 import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
 
@@ -57,6 +60,9 @@ const cardInfo = {
     "BONE-DARTS": {
       "Image": boneDarts,
     },
+    "BUTCHER-CLEAVER": {
+      "Image": butcherCleaver,
+    },
     "CLOTH": {
       "Image": cloth,
       "Keywords": ["armor"],
@@ -70,6 +76,9 @@ const cardInfo = {
     },
     "CROCODILEYES": {
       "Image": crocodileyes,
+    },
+    "FECAL-SALVE": {
+      "Image": fecalSalve,
     },
     "FOUNDING-STONE": {
       "Image": foundingStoneImg,
