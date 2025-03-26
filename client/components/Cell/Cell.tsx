@@ -39,6 +39,7 @@ const Cell = forwardRef(
             dragSnapToOrigin
             dragConstraints={dragConstraints}
             whileTap={{ scale: 1.2 }}
+            style={activeIndex === index ? { zIndex: 2 } : { zIndex: 1 }}
             layout
           >
             <LoadoutCard

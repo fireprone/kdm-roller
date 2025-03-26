@@ -66,20 +66,21 @@ const LoadoutSection = (props) => {
     if (cellIndex >= 0 && cellIndex !== activeIndex) {
       if (activeIndex === null || isNaN(activeIndex)) {
         newGridArray[cellIndex] = draggedCard.classList[0];
+        setGridArray(newGridArray);
       } else {
         const temp = newGridArray[cellIndex];
         newGridArray[cellIndex] = newGridArray[activeIndex];
         newGridArray[activeIndex] = temp;
+        setActiveIndex(null);
+        setGridArray(newGridArray);
       }
     }
-      setGridArray(newGridArray);
-      setActiveIndex(null);
   };
 
   const activateCard = (event) => {
     const parentElem = event.target.parentElement;
     if (parentElem) {
-      parentElem.parentElement.style.zIndex = 2;
+      // parentElem.parentElement.style.zIndex = 2;
       setActiveIndex(parseInt(parentElem.parentElement.id));
     }
   };

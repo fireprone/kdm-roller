@@ -167,10 +167,9 @@ const ThreeJsCanvas = ({
     requestAnimationFrame(render);
 
     const isDiscord = location.host.includes('discord');
-    const wsProtocol = isDiscord ? 'wss' : 'ws';
-    // const wsProtocol = 'wss';
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const websocket = new WebSocket(
-      `${wsProtocol}://${location.host}${isDiscord ? '/.proxy' : ''}/api`
+      `${wsProtocol}://${location.hostname}:3001${isDiscord ? '/.proxy' : ''}/api`
     );
 
     let selfUsername;

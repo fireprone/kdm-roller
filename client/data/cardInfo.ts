@@ -11,15 +11,52 @@ import rawhideWhip from '../img/Skinnery/rawhide-whip.png';
 import rawhideVest from '../img/Skinnery/rawhide-vest.png';
 
 import boneAxe from '../img/BoneSmith/bone-axe.png';
+import boneBlade from '../img/BoneSmith/bone-blade.png';
+import boneClub from '../img/BoneSmith/bone-club.png';
 import boneDagger from '../img/BoneSmith/bone-dagger.png';
 import boneDarts from '../img/BoneSmith/bone-darts.png';
 
+import singingCap from '../img/Chorosseum/singing-cap.png';
+import singingBreastplate from '../img/Chorosseum/singing-breastplate.png';
+import spearOfLife from '../img/Chorosseum/spear-of-life.png';
+
+import stoneNoses from '../img/OrganGrinder/stone-noses.png';
+import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
+import monsterGrease from '../img/OrganGrinder/monster-grease.png';
 // import crimsonBow from '../img/Crockery/crimson-bow.png';
 // import crocodileyes from '../img/Crockery/crocodileyes.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
+import crocodileyes from '../img/Crockery/crocodileyes.png';
 
+import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
 
 const cardInfo = {
+    "BANDAGES": {
+      "Image": bandages,
+      "Keywords": ["item"],
+      "Stats": {},
+      "Origin": "Skinnery",
+      "Terms": [],
+      "Affinities": ["LB", "DG"]
+    },
+    "BLOOD-DAGGER": {
+      "Image": bloodDagger,
+    },
+    "BONE-AXE": {
+      "Image": boneAxe,
+    },
+    "BONE-BLADE": {
+      "Image": boneBlade,
+    },
+    "BONE-CLUB": {
+      "Image": boneClub,
+    },
+    "BONE-DAGGER": {
+      "Image": boneDagger,
+    },
+    "BONE-DARTS": {
+      "Image": boneDarts,
+    },
     "CLOTH": {
       "Image": cloth,
       "Keywords": ["armor"],
@@ -30,6 +67,9 @@ const cardInfo = {
       "Origin": "Starting Gear",
       "Terms": [],
       "Affinities": []
+    },
+    "CROCODILEYES": {
+      "Image": crocodileyes,
     },
     "FOUNDING-STONE": {
       "Image": foundingStoneImg,
@@ -43,13 +83,11 @@ const cardInfo = {
       "Terms": ["Archive"],
       "Affinities": []
     },
-    "BANDAGES": {
-      "Image": bandages,
-      "Keywords": ["item"],
-      "Stats": {},
-      "Origin": "Skinnery",
-      "Terms": [],
-      "Affinities": ["LB", "DG"]
+    "LUCKY-CHARM": {
+      "Image": luckyCharm,
+    },
+    "MONSTER-GREASE": {
+      "Image": monsterGrease,
     },
     "RAWHIDE-BOOTS": {
       "Image": rawhideBoots,
@@ -93,16 +131,15 @@ const cardInfo = {
       "Terms": [],
       "Affinities": ["DB"]
     },
-    "RAWHIDE-WHIP": {
-      "Image": rawhideWhip,
-      "Keywords": ["weapon", "melee", "whip", "rawhide"],
+    "RAWHIDE-PANTS": {
+      "Image": rawhidePants,
+      "Keywords": ["armor", "set", "rawhide"],
       "Stats": {
-        "Speed": 3,
-        "Accuracy": 7,
-        "Strength": 1
+        "Armor": 1,
+        "Location": "Waist"
       },
       "Origin": "Skinnery",
-      "Terms": ["Provoke", "Priority Target"],
+      "Terms": [],
       "Affinities": []
     },
     "RAWHIDE-VEST": {
@@ -116,29 +153,33 @@ const cardInfo = {
       "Terms": [],
       "Affinities": ["UB", "RR"]
     },
-    "RAWHIDE-PANTS": {
-      "Image": rawhidePants,
-      "Keywords": ["armor", "set", "rawhide"],
+    "RAWHIDE-WHIP": {
+      "Image": rawhideWhip,
+      "Keywords": ["weapon", "melee", "whip", "rawhide"],
       "Stats": {
-        "Armor": 1,
-        "Location": "Waist"
+        "Speed": 3,
+        "Accuracy": 7,
+        "Strength": 1
       },
       "Origin": "Skinnery",
-      "Terms": [],
+      "Terms": ["Provoke", "Priority Target"],
       "Affinities": []
     },
-    "BONE-AXE": {
-      "Image": boneAxe,
+    "SINGING-CAP": {
+      "Image": singingCap,
     },
-    "BONE-DAGGER": {
-      "Image": boneDagger,
+    "SINGING-BREASTPLATE": {
+      "Image": singingBreastplate,
     },
-    "BONE-DARTS": {
-      "Image": boneDarts,
+    "SPEAR-OF-LIFE": {
+      "Image": spearOfLife,
     },
-    "BLOOD-DAGGER": {
-      "Image": bloodDagger,
+    "STONE-NOSES": {
+      "Image": stoneNoses,
     },
+    "VERMIN-BELLYBOOTS": {
+      "IMAGE": verminBellyboots,
+    }
   }
 
 export default cardInfo;
