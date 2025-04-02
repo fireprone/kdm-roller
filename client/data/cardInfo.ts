@@ -30,6 +30,7 @@ import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
 
 import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
+import royalScalpel from '../img/Rare/royal-scalpel.png';
 
 import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
 
@@ -173,6 +174,9 @@ const cardInfo = {
       "Origin": "Skinnery",
       "Terms": ["Provoke", "Priority Target"],
       "Affinities": []
+    },
+    "ROYAL-SCALPEL": {
+      "Image": royalScalpel,
     },
     "SINGING-CAP": {
       "Image": singingCap,
