@@ -166,85 +166,96 @@ const ThreeJsCanvas = ({
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 
-    const localSocket = `ws://${location.hostname}:3001/api`;
-    const hostedSocket = `wss://kdm-roller.onrender.com/api`;
-    const websocket = new WebSocket(
-      window.location.protocol === 'https:' ? hostedSocket : localSocket
-    );
-
     const selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
-    websocket.onopen = () => {
-      websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
-    };
+    const initializeWebSocket = () => {
+      const localSocket = `ws://${location.hostname}:3001/api`;
+      const hostedSocket = `wss://kdm-roller.onrender.com/api`;
+      const websocket = new WebSocket(
+        window.location.protocol === 'https:' ? hostedSocket : localSocket
+      );
 
-    websocket.onmessage = (e) => {
-      const message: Message = JSON.parse(e.data);
-      switch (message.action) {
-        case 'connect':
-          // Grab all player names from response
-          const serverPlayers = message.data as connectData;
+      websocket.onopen = () => {
+        websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
+      };
 
-          // Find any new players that aren't already initialized
-          const newPlayers = serverPlayers.filter((serverPlayer) => {
-            return !Object.keys(players.current).includes(serverPlayer);
-          });
+      websocket.onclose = () => {
+        setTimeout(() => {
+          //attempt to reconnect
+          initializeWebSocket();
+        }, 5000);
+      };
 
-          // Initialize remaining players
-          newPlayers.forEach((playerName) => {
+      websocket.onmessage = (e) => {
+        const message: Message = JSON.parse(e.data);
+        switch (message.action) {
+          case 'connect':
+            // Grab all player names from response
+            const serverPlayers = message.data as connectData;
+
+            // Find any new players that aren't already initialized
+            const newPlayers = serverPlayers.filter((serverPlayer) => {
+              return !Object.keys(players.current).includes(serverPlayer);
+            });
+
+            // Initialize remaining players
+            newPlayers.forEach((playerName) => {
+              setPlayerList(Object.keys(players.current));
+            });
+            break;
+          case 'disconnect':
+            const playerName = (message.data as disconnectData).username;
+            console.debug(`${playerName} disconnected`);
+
+            delete players.current[playerName];
+
+            if (!focusedPlayer) {
+              setFocusedPlayer(selfUsername);
+            }
+
             setPlayerList(Object.keys(players.current));
-          });
-          break;
-        case 'disconnect':
-          const playerName = (message.data as disconnectData).username;
-          console.debug(`${playerName} disconnected`);
+            break;
+          case 'roll':
+            const { username, type, rolls, timestamp } = message.data as rollData;
+            let diceToRoll;
+            let diceNotBeingRolled;
 
-          delete players.current[playerName];
+            if (type === 'd10') {
+              diceToRoll = d10DiceArray;
+              diceNotBeingRolled = armorDiceArray;
+            } else {
+              diceToRoll = armorDiceArray;
+              diceNotBeingRolled = d10DiceArray;
+            }
 
-          if (!focusedPlayer) {
-            setFocusedPlayer(selfUsername);
-          }
+            rollDice(username, diceToRoll, diceNotBeingRolled, rolls, timestamp, type);
+            break;
+          case 'rolled':
+            setPriorRolls((prev: priorRoll[]) => [...prev, message.data]);
+            break;
+          default:
+            console.error(`action (${message.action}) not recognized`);
+        }
+      };
 
-          setPlayerList(Object.keys(players.current));
-          break;
-        case 'roll':
-          const { username, type, rolls, timestamp } = message.data as rollData;
-          let diceToRoll;
-          let diceNotBeingRolled;
+      window.rollDiceCallback = (type: string, numberOfDice: number) => {
+        if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
+          return;
+        }
 
-          if (type === 'd10') {
-            diceToRoll = d10DiceArray;
-            diceNotBeingRolled = armorDiceArray;
-          } else {
-            diceToRoll = armorDiceArray;
-            diceNotBeingRolled = d10DiceArray;
-          }
+        if (websocket.readyState === websocket.OPEN) {
+          websocket.send(JSON.stringify({ action: 'roll', data: { type, numberOfDice }}));
+        }
+      };
 
-          rollDice(username, diceToRoll, diceNotBeingRolled, rolls, timestamp, type);
-          break;
-        case 'rolled':
-          setPriorRolls((prev: priorRoll[]) => [...prev, message.data]);
-          break;
-        default:
-          console.error(`action (${message.action}) not recognized`);
-      }
-    };
-
-    window.rollDiceCallback = (type: string, numberOfDice: number) => {
-      if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
-        return;
-      }
-
-      if (websocket.readyState === websocket.OPEN) {
-        websocket.send(JSON.stringify({ action: 'roll', data: { type, numberOfDice }}));
-      }
-    };
-
-    sendRolledResults = (result) => {
-      if (websocket.readyState === websocket.OPEN) {
-        websocket.send(JSON.stringify({ action: 'rolled', data: result}));
+      sendRolledResults = (result) => {
+        if (websocket.readyState === websocket.OPEN) {
+          websocket.send(JSON.stringify({ action: 'rolled', data: result}));
+        }
       }
     }
+
+    initializeWebSocket();
 
     function render() {
       world.fixedStep();
