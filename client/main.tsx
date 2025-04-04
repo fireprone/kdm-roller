@@ -7,13 +7,10 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import LoadoutSection from './components/LoadoutSection/LoadoutSection';
 import DiceChooser from './components/DiceChooser/DiceChooser';
+import World from './utils/World';
 
 const scene = new THREE.Scene();
-const world = new CANNON.World({
-  allowSleep: true,
-  gravity: new CANNON.Vec3(0, -50, 0),
-});
-world.defaultContactMaterial.restitution = 0.5;
+World.initialize();
 
 const root = createRoot(document.getElementById('app'));
 
@@ -33,7 +30,6 @@ const App = () => {
       <ThreeJsCanvas
         {...{
           scene,
-          world,
           setPlayerList,
           focusedPlayer,
           setFocusedPlayer,
