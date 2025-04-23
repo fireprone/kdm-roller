@@ -1,34 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { ArmorDice, TenSidedDice } from '../dice';
-import {
-  connectData,
-  disconnectData,
-  Message,
-  rollData,
-} from '../types/Message';
-import { priorRoll } from '../types/Roll';
 import CannonDebugger from 'cannon-es-debugger';
-
-let armorDiceArray = [];
-let d10DiceArray = [];
-
-let sendRolledResults = (result) => {};
+import Socket from '../utils/Socket';
+import D10Pool from '../utils/D10Pool';
+import ArmorDicePool from '../utils/ArmorDicePool';
+import World from '../utils/World';
 
 const ThreeJsCanvas = ({
   scene,
-  world,
-  setPlayerList,
+  // setPlayerList,
   focusedPlayer,
-  setFocusedPlayer,
+  // setFocusedPlayer,
   setPriorRolls,
 }) => {
-  const MAX_DICE = 5;
   const ref = useRef(null);
   const players = useRef({});
-
-  let timeoutIdForHidingDice;
 
   useEffect(() => {
     initialize();
@@ -51,90 +38,10 @@ const ThreeJsCanvas = ({
     }
   }, [focusedPlayer]);
 
-  function hideDice() {
-    armorDiceArray.forEach((dice: { mesh, body }) => {
-      dice.mesh.visible = false;
-    });
-  }
-
-  async function rollDice(username: string, diceToRoll, diceNotBeingRolled, rolls, timestamp, type: string) {
-    clearTimeout(timeoutIdForHidingDice);
-
-    const ongoingRolls: Promise<string>[] = [];
-    console.log(username + ' rolled');
-
-    for (let i = 0; i < diceToRoll.length; i++) {
-      if (i < rolls.length) {
-        diceToRoll[i].mesh.visible = true;
-        world.addBody(diceToRoll[i].body);
-        const resultPromise = diceToRoll[i].roll(rolls[i]);
-        ongoingRolls.push(resultPromise);
-      } else {
-        diceToRoll[i].mesh.visible = false;
-        world.removeBody(diceToRoll[i].body);
-      }
-
-      diceNotBeingRolled[i].mesh.visible = false;
-    }
-
-    Promise.all(ongoingRolls).then((diceRolls) => {
-      const currentRoll = {
-        username,
-        timestamp: new Date(timestamp).toLocaleTimeString(),
-        faces: diceRolls,
-      };
-
-      console.log('rolled -- ' + currentRoll.faces);
-
-      sendRolledResults(currentRoll);
-
-      timeoutIdForHidingDice = setTimeout(hideDice, 5000);
-    });
-  }
-
   function initialize() {
-
-    const initArmorDiceArray = async () => {
-      const array = [];
-
-      for (var i = 0; i < MAX_DICE; i++) {
-        const dice = new ArmorDice();
-
-        await dice.load(1);
-
-        dice.mesh.visible = false;
-
-        scene.add(dice.mesh);
-        array.push(dice);
-      }
-
-      return array;
-    };
-
-    const initD10Array = async () => {
-      const array = [];
-
-      for (var i = 0; i < MAX_DICE; i++) {
-        const dice = new TenSidedDice(); 
-
-        await dice.load(2);
-
-        dice.mesh.visible = false;
-
-        scene.add(dice.mesh);
-        array.push(dice);
-      }
-
-      return array;
-    };
-
-    initArmorDiceArray().then((array) => {
-      armorDiceArray = array;
-    })
-
-    initD10Array().then((array) => {
-      d10DiceArray = array;
-    });
+    ArmorDicePool.initialize(scene);    
+    
+    D10Pool.initialize(scene);
 
     const camera: any = new THREE.PerspectiveCamera(
       75,
@@ -166,97 +73,21 @@ const ThreeJsCanvas = ({
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 
-    const localSocket = `ws://${location.hostname}:3001/api`;
-    const hostedSocket = `wss://kdm-roller.onrender.com/api`;
-    const websocket = new WebSocket(
-      window.location.protocol === 'https:' ? hostedSocket : localSocket
-    );
-
     const selfUsername = 'User#' + Math.floor(Math.random() * 100);
 
-    websocket.onopen = () => {
-      websocket.send(JSON.stringify({ action: 'join', data: selfUsername }));
-    };
-
-    websocket.onmessage = (e) => {
-      const message: Message = JSON.parse(e.data);
-      switch (message.action) {
-        case 'connect':
-          // Grab all player names from response
-          const serverPlayers = message.data as connectData;
-
-          // Find any new players that aren't already initialized
-          const newPlayers = serverPlayers.filter((serverPlayer) => {
-            return !Object.keys(players.current).includes(serverPlayer);
-          });
-
-          // Initialize remaining players
-          newPlayers.forEach((playerName) => {
-            setPlayerList(Object.keys(players.current));
-          });
-          break;
-        case 'disconnect':
-          const playerName = (message.data as disconnectData).username;
-          console.debug(`${playerName} disconnected`);
-
-          delete players.current[playerName];
-
-          if (!focusedPlayer) {
-            setFocusedPlayer(selfUsername);
-          }
-
-          setPlayerList(Object.keys(players.current));
-          break;
-        case 'roll':
-          const { username, type, rolls, timestamp } = message.data as rollData;
-          let diceToRoll;
-          let diceNotBeingRolled;
-
-          if (type === 'd10') {
-            diceToRoll = d10DiceArray;
-            diceNotBeingRolled = armorDiceArray;
-          } else {
-            diceToRoll = armorDiceArray;
-            diceNotBeingRolled = d10DiceArray;
-          }
-
-          rollDice(username, diceToRoll, diceNotBeingRolled, rolls, timestamp, type);
-          break;
-        case 'rolled':
-          setPriorRolls((prev: priorRoll[]) => [...prev, message.data]);
-          break;
-        default:
-          console.error(`action (${message.action}) not recognized`);
-      }
-    };
-
-    window.rollDiceCallback = (type: string, numberOfDice: number) => {
-      if (isNaN(numberOfDice) || numberOfDice < 1 || numberOfDice > MAX_DICE) {
-        return;
-      }
-
-      if (websocket.readyState === websocket.OPEN) {
-        websocket.send(JSON.stringify({ action: 'roll', data: { type, numberOfDice }}));
-      }
-    };
-
-    sendRolledResults = (result) => {
-      if (websocket.readyState === websocket.OPEN) {
-        websocket.send(JSON.stringify({ action: 'rolled', data: result}));
-      }
-    }
+    Socket.initialize(selfUsername, setPriorRolls);
 
     function render() {
-      world.fixedStep();
+      World.get().fixedStep();
 
-      armorDiceArray.forEach((dice: { mesh, body }) => {
+      ArmorDicePool.get().forEach((dice: { mesh, body }) => {
         if (dice.mesh) {
             dice.mesh.position.copy(dice.body.position);
             dice.mesh.quaternion.copy(dice.body.quaternion);
         }
       });
 
-      d10DiceArray.forEach((dice: { mesh, body }) => {
+      D10Pool.get().forEach((dice: { mesh, body }) => {
         if (dice.mesh) {
             dice.mesh.position.copy(dice.body.position);
             dice.mesh.quaternion.copy(dice.body.quaternion);
@@ -291,7 +122,7 @@ const ThreeJsCanvas = ({
       });
       floorBody.position.copy(floor.position);
       floorBody.quaternion.copy(floor.quaternion);
-      world.addBody(floorBody);
+      World.get().addBody(floorBody);
     }
 
     function createWall(position, axis, rotation) {
@@ -318,7 +149,7 @@ const ThreeJsCanvas = ({
       });
       wallBody.position.copy(wallMesh.position);
       wallBody.quaternion.copy(wallMesh.quaternion);
-      world.addBody(wallBody);
+      World.get().addBody(wallBody);
     }
 
     function createLights() {
