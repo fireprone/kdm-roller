@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import './DiceChooser.css';
 
 const DiceChooser = () => {
-  const [numberOfDice, setNumberOfDice] = useState(0);
+  const [numberOfDice, setNumberOfDice] = useState(2);
 
   return (
     <div id='dice-chooser'>
