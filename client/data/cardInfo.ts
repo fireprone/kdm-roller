@@ -10,6 +10,8 @@ import rawhidePants from '../img/Skinnery/rawhide-pants.png';
 import rawhideWhip from '../img/Skinnery/rawhide-whip.png';
 import rawhideVest from '../img/Skinnery/rawhide-vest.png';
 
+import scavengerKit from '../img/BarberSurgeon/scavenger-kit.png';
+
 import boneAxe from '../img/BoneSmith/bone-axe.png';
 import boneBlade from '../img/BoneSmith/bone-blade.png';
 import boneClub from '../img/BoneSmith/bone-club.png';
@@ -18,6 +20,8 @@ import boneDarts from '../img/BoneSmith/bone-darts.png';
 
 import singingCap from '../img/Chorosseum/singing-cap.png';
 import singingBreastplate from '../img/Chorosseum/singing-breastplate.png';
+import singingBoots from '../img/Chorosseum/singing-boots.png';
+import singingGloves from '../img/Chorosseum/singing-gloves.png';
 import spearOfLife from '../img/Chorosseum/spear-of-life.png';
 
 import stoneNoses from '../img/OrganGrinder/stone-noses.png';
@@ -178,11 +182,20 @@ const cardInfo = {
     "ROYAL-SCALPEL": {
       "Image": royalScalpel,
     },
+    "SCAVENGER-KIT": {
+      "Image": scavengerKit,
+    },
     "SINGING-CAP": {
       "Image": singingCap,
     },
+    "SINGING-BOOTS": {
+      "Image": singingBoots,
+    },
     "SINGING-BREASTPLATE": {
       "Image": singingBreastplate,
+    },
+    "SINGING-GLOVES": {
+      "Image": singingGloves,
     },
     "SPEAR-OF-LIFE": {
       "Image": spearOfLife,
