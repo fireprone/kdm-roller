@@ -37,6 +37,10 @@ import leatherMask from '../img/LeatherWorker/leather-mask.png';
 import leatherShield from '../img/LeatherWorker/round-leather-shield.png';
 import leatherCuirass from '../img/LeatherWorker/leather-cuirass.png';
 
+import counterweightedAxe from '../img/WeaponCrafter/counterweighted-axe.png';
+
+import sonicTomahawk from '../img/Plumery/sonic-tomahawk.png';
+
 import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 import royalScalpel from '../img/Rare/royal-scalpel.png';
 
@@ -71,6 +75,9 @@ const cardInfo = {
     },
     "BUTCHER-CLEAVER": {
       "Image": butcherCleaver,
+    },
+    "COUNTERWEIGHTED-AXE": {
+      "Image": counterweightedAxe,
     },
     "CLOTH": {
       "Image": cloth,
@@ -209,6 +216,9 @@ const cardInfo = {
     },
     "SINGING-GLOVES": {
       "Image": singingGloves,
+    },
+    "SONIC-TOMAHAWK": {
+      "Image": sonicTomahawk,
     },
     "SPEAR-OF-LIFE": {
       "Image": spearOfLife,
