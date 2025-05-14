@@ -33,6 +33,10 @@ import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
 
+import leatherMask from '../img/LeatherWorker/leather-mask.png';
+import leatherShield from '../img/LeatherWorker/round-leather-shield.png';
+import leatherCuirass from '../img/LeatherWorker/leather-cuirass.png';
+
 import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 import royalScalpel from '../img/Rare/royal-scalpel.png';
 
@@ -96,6 +100,15 @@ const cardInfo = {
       "Origin": "Starting Gear",
       "Terms": ["Archive"],
       "Affinities": []
+    },
+    "LEATHER-CUIRASS": {
+      "Image": leatherCuirass,
+    },
+    "LEATHER-MASK": {
+      "Image": leatherMask,
+    },
+    "LEATHER-SHIELD": {
+      "Image": leatherShield,
     },
     "LUCKY-CHARM": {
       "Image": luckyCharm,
