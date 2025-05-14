@@ -11,6 +11,7 @@ import rawhideWhip from '../img/Skinnery/rawhide-whip.png';
 import rawhideVest from '../img/Skinnery/rawhide-vest.png';
 
 import scavengerKit from '../img/BarberSurgeon/scavenger-kit.png';
+import firstAidKit from '../img/BarberSurgeon/first-aid-kit.png';
 
 import boneAxe from '../img/BoneSmith/bone-axe.png';
 import boneBlade from '../img/BoneSmith/bone-blade.png';
@@ -28,6 +29,7 @@ import stoneNoses from '../img/OrganGrinder/stone-noses.png';
 import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
 import monsterGrease from '../img/OrganGrinder/monster-grease.png';
 import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
+import driedAcanthus from '../img/OrganGrinder/dried-acanthus.png';
 // import crimsonBow from '../img/Crockery/crimson-bow.png';
 // import crocodileyes from '../img/Crockery/crocodileyes.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
@@ -93,8 +95,14 @@ const cardInfo = {
     "CROCODILEYES": {
       "Image": crocodileyes,
     },
+    "DRIED-ACANTHUS": {
+      "Image": driedAcanthus,
+    },
     "FECAL-SALVE": {
       "Image": fecalSalve,
+    },
+    "FIRST-AID-KIT": {
+      "Image": firstAidKit,
     },
     "FOUNDING-STONE": {
       "Image": foundingStoneImg,
