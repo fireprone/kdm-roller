@@ -23,7 +23,10 @@ import singingCap from '../img/Chorosseum/singing-cap.png';
 import singingBreastplate from '../img/Chorosseum/singing-breastplate.png';
 import singingBoots from '../img/Chorosseum/singing-boots.png';
 import singingGloves from '../img/Chorosseum/singing-gloves.png';
+import singingPantaloons from '../img/Chorosseum/singing-pantaloons.png';
 import spearOfLife from '../img/Chorosseum/spear-of-life.png';
+import hamfluter from '../img/Chorosseum/hamfluter.png';
+import pipa from '../img/Chorosseum/pipa.png';
 
 import stoneNoses from '../img/OrganGrinder/stone-noses.png';
 import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
@@ -35,6 +38,7 @@ import driedAcanthus from '../img/OrganGrinder/dried-acanthus.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
 
+import leatherBoots from '../img/LeatherWorker/leather-boots.png';
 import leatherMask from '../img/LeatherWorker/leather-mask.png';
 import leatherShield from '../img/LeatherWorker/round-leather-shield.png';
 import leatherCuirass from '../img/LeatherWorker/leather-cuirass.png';
@@ -47,6 +51,8 @@ import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 import royalScalpel from '../img/Rare/royal-scalpel.png';
 
 import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
+
+import dreamKeeperKnife from '../img/SeedPattern/dream-keeper-knife.png';
 
 const cardInfo = {
     "BANDAGES": {
@@ -95,6 +101,9 @@ const cardInfo = {
     "CROCODILEYES": {
       "Image": crocodileyes,
     },
+    "DREAM-KEEPER-KNIFE": {
+      "Image": dreamKeeperKnife,
+    },
     "DRIED-ACANTHUS": {
       "Image": driedAcanthus,
     },
@@ -116,6 +125,12 @@ const cardInfo = {
       "Terms": ["Archive"],
       "Affinities": []
     },
+    "HAMFLUTER": {
+      "Image": hamfluter,
+    },
+    "LEATHER-BOOTS": {
+      "Image": leatherBoots,
+    },
     "LEATHER-CUIRASS": {
       "Image": leatherCuirass,
     },
@@ -130,6 +145,9 @@ const cardInfo = {
     },
     "MONSTER-GREASE": {
       "Image": monsterGrease,
+    },
+    "PIPA": {
+      "Image": pipa,
     },
     "RAWHIDE-BOOTS": {
       "Image": rawhideBoots,
@@ -224,6 +242,9 @@ const cardInfo = {
     },
     "SINGING-GLOVES": {
       "Image": singingGloves,
+    },
+    "SINGING-PANTALOONS": {
+      "Image": singingPantaloons,
     },
     "SONIC-TOMAHAWK": {
       "Image": sonicTomahawk,
