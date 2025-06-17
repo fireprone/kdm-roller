@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -10,6 +11,9 @@ const port = 3001;
 
 // Allow express to parse JSON bodies
 app.use(express.json());
+app.use(cors({
+  origin: 'https://fireprone.github.io',
+}));
 
 app.get('/api/token', async (req, res) => {
   const data = {
