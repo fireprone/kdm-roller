@@ -11,6 +11,16 @@ const port = 3001;
 // Allow express to parse JSON bodies
 app.use(express.json());
 
+app.get('/api/token', async (req, res) => {
+  const data = {
+    apiKey: process.env.GOOGLE_API_KEY,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    spreadsheetId: process.env.SPREADSHEET_ID,
+  };
+  
+  res.send(data); 
+});
+
 app.post('/api/token', async (req, res) => {
   // Exchange the code for an access_token
   const response = await fetch(`https://discord.com/api/oauth2/token`, {
