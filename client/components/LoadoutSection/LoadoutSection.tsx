@@ -39,6 +39,12 @@ const LoadoutSection = (props) => {
   const [overlayIndex, setOverlayIndex] = useState(-1);
 
   useEffect(() => {
+    document.addEventListener('updateGrid', (e: CustomEvent) => {
+      setGridArray(e.detail);
+    });
+  }, []);
+
+  useEffect(() => {
     //Save grid
     sessionStorage.setItem('gearGrid', JSON.stringify(gridArray));
   }, [gridArray]);
