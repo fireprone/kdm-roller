@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hello, World</title>
-    <script type="module" crossorigin src="/kdm-roller/assets/index-vjbkW0P7.js"></script>
+    <script type="module" crossorigin src="/kdm-roller/assets/index-LN0BP7Yq.js"></script>
     <link rel="stylesheet" crossorigin href="/kdm-roller/assets/index-NJp6hAjn.css">
   </head>
   <body style="margin: 0">
@@ -13,5 +13,100 @@
 
     <!-- <script type="module" src="discord.js"></script> -->
 
+
+
+    <script type="text/javascript">
+      // Discovery doc URL for APIs used by the quickstart
+      const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      const SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly';
+
+      let tokenClient;
+      let gapiInited = false;
+      let gisInited = false;
+
+      /**
+       * Callback after api.js is loaded.
+       */
+      function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
+      }
+
+      async function gisLoaded() {
+        const response = await fetch('/api/token').then((data) => data.json());   
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: response.clientId,
+          scope: SCOPES,
+          callback: '', // defined later
+        });
+        gisInited = true;
+        finish();
+      }
+
+      /**
+       * Callback after the API client is loaded. Loads the
+       * discovery doc to initialize the API.
+       */
+      async function initializeGapiClient() {
+        const response = await fetch('/api/token').then((data) => data.json());  
+        await gapi.client.init({
+          apiKey: response.apiKey,
+          discoveryDocs: [DISCOVERY_DOC],
+        });
+        gapiInited = true;
+        sessionStorage.setItem('gapiToken', gapi.client.getToken());
+        finish();
+      }
+
+      async function finish() {
+        if (!gapiInited || !gisInited) {
+          return;
+        }
+
+        const response = await fetch('/api/token').then((data) => data.json());
+        tokenClient.callback = async (resp) => {
+          if (resp.error !== undefined) {
+            throw (resp);
+          }
+      
+          const spreadsheetInfo = await gapi.client.sheets.spreadsheets.get({
+            spreadsheetId: response.spreadsheetId,
+            ranges: ['Gear Storage!H1:R25'], 
+            includeGridData: true,
+          });
+          gearStorageGridData = spreadsheetInfo.result.sheets[0].data[0];
+          const grid1_1 = gearStorageGridData.rowData[3].values[0].formattedValue?.replaceAll(' ', '-');
+          const grid1_2 = gearStorageGridData.rowData[3].values[2].formattedValue?.replaceAll(' ', '-');
+          const grid1_3 = gearStorageGridData.rowData[3].values[4].formattedValue?.replaceAll(' ', '-');
+
+          const grid1_4 = gearStorageGridData.rowData[5].values[0].formattedValue?.replaceAll(' ', '-');
+          const grid1_5 = gearStorageGridData.rowData[5].values[2].formattedValue?.replaceAll(' ', '-');
+          const grid1_6 = gearStorageGridData.rowData[5].values[4].formattedValue?.replaceAll(' ', '-');
+
+          const grid1_7 = gearStorageGridData.rowData[7].values[0].formattedValue?.replaceAll(' ', '-');
+          const grid1_8 = gearStorageGridData.rowData[7].values[2].formattedValue?.replaceAll(' ', '-');
+          const grid1_9 = gearStorageGridData.rowData[7].values[4].formattedValue?.replaceAll(' ', '-');
+
+          const event = new CustomEvent('updateGrid', { detail: [grid1_1, grid1_2, grid1_3, grid1_4, grid1_5, grid1_6, grid1_7, grid1_8, grid1_9]} );
+          document.dispatchEvent(event);
+        };
+
+        const gapiToken = sessionStorage.getItem('gapiToken');
+
+        if (gapiToken === null) {
+          // Prompt the user to select a Google Account and ask for consent to share their data
+          // when establishing a new session.
+          tokenClient.requestAccessToken({prompt: 'consent'});
+        } else {
+          // Skip display of account chooser and consent dialog for an existing session.
+          tokenClient.requestAccessToken({prompt: ''});
+        }
+      }
+    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
   </body>
 </html>
