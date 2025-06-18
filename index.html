@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hello, World</title>
-    <script type="module" crossorigin src="/kdm-roller/assets/index-LN0BP7Yq.js"></script>
-    <link rel="stylesheet" crossorigin href="/kdm-roller/assets/index-NJp6hAjn.css">
+    <script type="module" crossorigin src="/kdm-roller/assets/index-3yow0rMc.js"></script>
+    <link rel="stylesheet" crossorigin href="/kdm-roller/assets/index-V9FoA0zO.css">
   </head>
   <body style="margin: 0">
     <div id="app"></div>
@@ -78,20 +78,59 @@
             includeGridData: true,
           });
           gearStorageGridData = spreadsheetInfo.result.sheets[0].data[0];
-          const grid1_1 = gearStorageGridData.rowData[3].values[0].formattedValue?.replaceAll(' ', '-');
-          const grid1_2 = gearStorageGridData.rowData[3].values[2].formattedValue?.replaceAll(' ', '-');
-          const grid1_3 = gearStorageGridData.rowData[3].values[4].formattedValue?.replaceAll(' ', '-');
 
-          const grid1_4 = gearStorageGridData.rowData[5].values[0].formattedValue?.replaceAll(' ', '-');
-          const grid1_5 = gearStorageGridData.rowData[5].values[2].formattedValue?.replaceAll(' ', '-');
-          const grid1_6 = gearStorageGridData.rowData[5].values[4].formattedValue?.replaceAll(' ', '-');
+          function getGridData(startingRow, startingColumn) {
+            const gridX_1 = gearStorageGridData.rowData[startingRow].values[startingColumn].formattedValue?.replaceAll(' ', '-');
+            const gridX_2 = gearStorageGridData.rowData[startingRow].values[startingColumn+2].formattedValue?.replaceAll(' ', '-');
+            const gridX_3 = gearStorageGridData.rowData[startingRow].values[startingColumn+4].formattedValue?.replaceAll(' ', '-');
 
-          const grid1_7 = gearStorageGridData.rowData[7].values[0].formattedValue?.replaceAll(' ', '-');
-          const grid1_8 = gearStorageGridData.rowData[7].values[2].formattedValue?.replaceAll(' ', '-');
-          const grid1_9 = gearStorageGridData.rowData[7].values[4].formattedValue?.replaceAll(' ', '-');
+            const gridX_4 = gearStorageGridData.rowData[startingRow+2].values[startingColumn].formattedValue?.replaceAll(' ', '-');
+            const gridX_5 = gearStorageGridData.rowData[startingRow+2].values[startingColumn+2].formattedValue?.replaceAll(' ', '-');
+            const gridX_6 = gearStorageGridData.rowData[startingRow+2].values[startingColumn+4].formattedValue?.replaceAll(' ', '-');
 
-          const event = new CustomEvent('updateGrid', { detail: [grid1_1, grid1_2, grid1_3, grid1_4, grid1_5, grid1_6, grid1_7, grid1_8, grid1_9]} );
-          document.dispatchEvent(event);
+            const gridX_7 = gearStorageGridData.rowData[startingRow+4].values[startingColumn].formattedValue?.replaceAll(' ', '-');
+            const gridX_8 = gearStorageGridData.rowData[startingRow+4].values[startingColumn+2].formattedValue?.replaceAll(' ', '-');
+            const gridX_9 = gearStorageGridData.rowData[startingRow+4].values[startingColumn+4].formattedValue?.replaceAll(' ', '-');
+
+            return [
+              gridX_1,
+              gridX_2,
+              gridX_3,
+              gridX_4,
+              gridX_5,
+              gridX_6,
+              gridX_7,
+              gridX_8,
+              gridX_9,
+            ];
+          }
+
+
+          document.getElementById('grid-selector').style.display = 'flex';
+          
+          const grid1 = getGridData(3, 0);
+          document.getElementById('select-grid-1').addEventListener('click', () => {
+            const event = new CustomEvent('updateGrid', { detail: grid1 } );
+            document.dispatchEvent(event);
+          });
+
+          const grid2 = getGridData(3, 6);
+          document.getElementById('select-grid-2').addEventListener('click', () => {
+            const event = new CustomEvent('updateGrid', { detail: grid2 } );
+            document.dispatchEvent(event);
+          });
+
+          const grid3 = getGridData(13, 0);
+          document.getElementById('select-grid-3').addEventListener('click', () => {
+            const event = new CustomEvent('updateGrid', { detail: grid3 } );
+            document.dispatchEvent(event);
+          });
+
+          const grid4 = getGridData(13, 6);
+          document.getElementById('select-grid-4').addEventListener('click', () => {
+            const event = new CustomEvent('updateGrid', { detail: grid4 } );
+            document.dispatchEvent(event);
+          });
         };
 
         const gapiToken = sessionStorage.getItem('gapiToken');
