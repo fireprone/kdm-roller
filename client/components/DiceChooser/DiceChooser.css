@@ -3,6 +3,7 @@
     bottom: 0;
     color: blue;
     margin: 1rem;
+    z-index: 1;
 }
 
 #dice-chooser input {

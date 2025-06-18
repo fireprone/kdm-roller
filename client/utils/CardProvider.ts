@@ -5,8 +5,6 @@ const CardProvider = (() => {
   const getCard = async (cardName) => {
     let cardObj = {};
 
-    console.log(cardName);
-
     if (!cardName) {
       cardObj.image = '';
     } else {
