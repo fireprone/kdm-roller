@@ -102,6 +102,12 @@ const LoadoutSection = (props) => {
           />
         )}
       </AnimatePresence> 
+      <div id='grid-selector' style={{ display: 'none' }}>
+        <button id='select-grid-1'>Grid 1</button>
+        <button id='select-grid-2'>Grid 2</button>
+        <button id='select-grid-3'>Grid 3</button>
+        <button id='select-grid-4'>Grid 4</button>
+      </div>
       <section id='grid-section'>
         <LoadoutGrid
           cells={cells}

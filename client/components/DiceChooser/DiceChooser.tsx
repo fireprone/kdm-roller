@@ -6,7 +6,6 @@ const DiceChooser = () => {
 
   return (
     <div id='dice-chooser'>
-        <button onClick={() => window.rollDiceCallback('armor', numberOfDice)}>Armor Dice</button>
         <input type='textbox' maxLength='1' value={numberOfDice} 
           onChange={(e) => {
             setNumberOfDice(Number(e.key));
@@ -17,6 +16,7 @@ const DiceChooser = () => {
             }
             setNumberOfDice(Number(e.key));
           }}></input>
+        <button onClick={() => window.rollDiceCallback('armor', numberOfDice)}>Armor Dice</button>
         <button onClick={() => window.rollDiceCallback('d10', numberOfDice)}>d10</button>
     </div>
   );

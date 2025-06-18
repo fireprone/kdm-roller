@@ -6,7 +6,7 @@
   margin: 0 auto;
   padding: 1rem 0;
   width: 95vw;
-  max-width: 40rem;
+  max-width: 35rem;
 }
 
 #loadout-grid iframe {
@@ -18,4 +18,34 @@
   position: relative;
   background-color: #333;
   border-radius: 10%;
+}
+
+#grid-selector {
+  color: white;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1rem;
+}
+
+#grid-selector button {
+  border: none;
+  min-width: 5rem;
+  min-height: 2rem;
+  border-radius: 1rem;
+}
+
+#select-grid-1 {
+  background-color: rgb(147, 196, 125);
+}
+
+#select-grid-2 {
+  background-color: rgb(224, 102, 102);
+}
+
+#select-grid-3 {
+  background-color: rgb(0, 255, 255);
+}
+
+#select-grid-4 {
+  background-color: rgb(243, 243, 243); 
 }
