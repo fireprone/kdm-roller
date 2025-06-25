@@ -105,32 +105,25 @@
             ];
           }
 
+          function initializeGridButton(position) {
+            const isFirstOrSecond = position < 3;
+            const isOdd = position % 2 !== 0;
+
+            const grid = getGridData(isFirstOrSecond ? 3 : 13, isOdd ? 0 : 6);
+            const gridName = gearStorageGridData.rowData[isFirstOrSecond ? 1 : 11].values[isOdd ? 2 : 8].formattedValue;
+            const gridButton = document.getElementById(`select-grid-${position}`);
+            gridButton.innerHTML = `Grid ${position} -- <b>${gridName}</b>`;
+            gridButton.addEventListener('click', () => {
+              const event = new CustomEvent('updateGrid', { detail: grid } );
+              document.dispatchEvent(event);
+            });
+          }
 
           document.getElementById('grid-selector').style.display = 'flex';
           
-          const grid1 = getGridData(3, 0);
-          document.getElementById('select-grid-1').addEventListener('click', () => {
-            const event = new CustomEvent('updateGrid', { detail: grid1 } );
-            document.dispatchEvent(event);
-          });
-
-          const grid2 = getGridData(3, 6);
-          document.getElementById('select-grid-2').addEventListener('click', () => {
-            const event = new CustomEvent('updateGrid', { detail: grid2 } );
-            document.dispatchEvent(event);
-          });
-
-          const grid3 = getGridData(13, 0);
-          document.getElementById('select-grid-3').addEventListener('click', () => {
-            const event = new CustomEvent('updateGrid', { detail: grid3 } );
-            document.dispatchEvent(event);
-          });
-
-          const grid4 = getGridData(13, 6);
-          document.getElementById('select-grid-4').addEventListener('click', () => {
-            const event = new CustomEvent('updateGrid', { detail: grid4 } );
-            document.dispatchEvent(event);
-          });
+          for (let i = 0; i < 4; i++) {
+            initializeGridButton(i+1);
+          }
         };
 
         const gapiToken = sessionStorage.getItem('gapiToken');
