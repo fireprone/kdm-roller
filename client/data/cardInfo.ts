@@ -33,8 +33,7 @@ import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
 import monsterGrease from '../img/OrganGrinder/monster-grease.png';
 import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
 import driedAcanthus from '../img/OrganGrinder/dried-acanthus.png';
-// import crimsonBow from '../img/Crockery/crimson-bow.png';
-// import crocodileyes from '../img/Crockery/crocodileyes.png';
+import crimsonBow from '../img/Crockery/crimson-bow.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
 
@@ -42,6 +41,8 @@ import leatherBoots from '../img/LeatherWorker/leather-boots.png';
 import leatherMask from '../img/LeatherWorker/leather-mask.png';
 import leatherShield from '../img/LeatherWorker/round-leather-shield.png';
 import leatherCuirass from '../img/LeatherWorker/leather-cuirass.png';
+import leatherBracers from '../img/LeatherWorker/leather-bracers.png';
+import leatherSkirt from '../img/LeatherWorker/leather-skirt.png';
 
 import counterweightedAxe from '../img/WeaponCrafter/counterweighted-axe.png';
 
@@ -98,6 +99,9 @@ const cardInfo = {
       "Terms": [],
       "Affinities": []
     },
+    "CRIMSON-BOW": {
+      "Image": crimsonBow,
+    },
     "CROCODILEYES": {
       "Image": crocodileyes,
     },
@@ -131,6 +135,9 @@ const cardInfo = {
     "LEATHER-BOOTS": {
       "Image": leatherBoots,
     },
+    "LEATHER-BRACERS": {
+      "Image": leatherBracers,
+    },
     "LEATHER-CUIRASS": {
       "Image": leatherCuirass,
     },
@@ -139,6 +146,9 @@ const cardInfo = {
     },
     "LEATHER-SHIELD": {
       "Image": leatherShield,
+    },
+    "LEATHER-SKIRT": {
+      "Image": leatherSkirt,
     },
     "LUCKY-CHARM": {
       "Image": luckyCharm,
