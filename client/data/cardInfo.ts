@@ -54,6 +54,9 @@ import royalScalpel from '../img/Rare/royal-scalpel.png';
 import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
 
 import dreamKeeperKnife from '../img/SeedPattern/dream-keeper-knife.png';
+import cruelCleaver from '../img/SeedPattern/cruel-cleaver.png';
+import diamondScabKatar from '../img/SeedPattern/diamond-scab-katar.png';
+import fingernailWhip from '../img/SeedPattern/fingernail-whip.png';
 
 const cardInfo = {
     "BANDAGES": {
@@ -105,6 +108,12 @@ const cardInfo = {
     "CROCODILEYES": {
       "Image": crocodileyes,
     },
+    "CRUEL-CLEAVER": {
+      "Image": cruelCleaver,
+    },
+    "DIAMOND-SCAB-KATAR": {
+      "Image": diamondScabKatar,
+    },
     "DREAM-KEEPER-KNIFE": {
       "Image": dreamKeeperKnife,
     },
@@ -113,6 +122,9 @@ const cardInfo = {
     },
     "FECAL-SALVE": {
       "Image": fecalSalve,
+    },
+    "FINGERNAIL-WHIP": {
+      "Image": fingernailWhip,
     },
     "FIRST-AID-KIT": {
       "Image": firstAidKit,
