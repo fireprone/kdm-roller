@@ -34,6 +34,7 @@ import monsterGrease from '../img/OrganGrinder/monster-grease.png';
 import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
 import driedAcanthus from '../img/OrganGrinder/dried-acanthus.png';
 import crimsonBow from '../img/Crockery/crimson-bow.png';
+import crimsonSlippers from '../img/Crockery/crimson-slippers.png';
 import bloodDagger from '../img/Crockery/blood-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
 
@@ -105,6 +106,9 @@ const cardInfo = {
     },
     "CRIMSON-BOW": {
       "Image": crimsonBow,
+    },
+    "CRIMSON-SLIPPERS": {
+      "Image": crimsonSlippers,
     },
     "CROCODILEYES": {
       "Image": crocodileyes,
