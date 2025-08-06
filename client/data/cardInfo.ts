@@ -45,6 +45,7 @@ import leatherBracers from '../img/LeatherWorker/leather-bracers.png';
 import leatherSkirt from '../img/LeatherWorker/leather-skirt.png';
 
 import counterweightedAxe from '../img/WeaponCrafter/counterweighted-axe.png';
+import scrapSword from '../img/WeaponCrafter/scrap-sword.png';
 
 import sonicTomahawk from '../img/Plumery/sonic-tomahawk.png';
 
@@ -252,6 +253,9 @@ const cardInfo = {
     },
     "SCAVENGER-KIT": {
       "Image": scavengerKit,
+    },
+    "SCRAP-SWORD": {
+      "Image": scrapSword,
     },
     "SINGING-CAP": {
       "Image": singingCap,
