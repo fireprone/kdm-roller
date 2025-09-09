@@ -8,7 +8,7 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }
     <motion.div
       id='Overlay'
       initial={{ opacity: 0, marginTop: 0 }}
-      animate={{ opacity: 1, marginTop: '10vmin' }}
+      animate={{ opacity: 1, marginTop: 0 }}
       exit={{ opacity: 0, marginTop: 0 }}
       transition={{
         opacity: { type: 'tween', duration: 0.3 },
