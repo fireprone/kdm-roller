@@ -1,7 +1,7 @@
 //TODO: On motion end, remove 'translate-3d' attr
 
 import './Cell.css';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { motion } from 'motion/react';
 
@@ -18,15 +18,35 @@ const Cell = forwardRef(
       setOverlayIndex,
       dragConstraints,
       cardName,
+      isCraftMode,
     },
     ref
   ) => {
+
+    const [isNewlyCrafted, setIsNewlyCrafted] = useState(false);
+
+    useEffect(() => {
+      if (cardName && isCraftMode) {
+        setIsNewlyCrafted(true);
+      }
+    }, [cardName]);
+
+    useEffect(() => {
+      if (!isCraftMode) {
+        setIsNewlyCrafted(false);
+      }
+    }, [isCraftMode])
+
     return (
       <div
         id={index}
         ref={ref}
         className='loadout-space'
-        style={activeIndex === index ? { zIndex: 2 } : { zIndex: 1 }}
+        style={{
+          zIndex: activeIndex === index ? 2 : 1,
+          padding: isNewlyCrafted ? '1rem' : 0,
+          background: isNewlyCrafted ? 'purple' : '#333',
+        }}
       >
         {cardName ? (
           <motion.div

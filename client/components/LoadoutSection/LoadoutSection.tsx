@@ -134,6 +134,7 @@ const LoadoutSection = (props) => {
           clickListener={setIsOverlayOpen}
           setOverlayIndex={setOverlayIndex}
           dragConstraints={sectionRef}
+          isCraftMode={props.isCraftMode}
         />
       </section>
     </div>

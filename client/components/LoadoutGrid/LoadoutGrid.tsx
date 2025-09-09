@@ -12,6 +12,7 @@ const LoadoutGrid = ({
   clickListener,
   setOverlayIndex,
   dragConstraints,
+  isCraftMode,
 }) => {
   return (
       <div id='loadout-grid'>
@@ -28,6 +29,7 @@ const LoadoutGrid = ({
             ref={cell}
             dragConstraints={dragConstraints}
             cardName={gridArray[i]}
+            isCraftMode={isCraftMode}
           />
         ))}
       </div>
