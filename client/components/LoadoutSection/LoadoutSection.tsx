@@ -3,6 +3,7 @@ import LoadoutGrid from '../LoadoutGrid/LoadoutGrid';
 import { AnimatePresence } from 'motion/react';
 import Overlay from '../Overlay/Overlay';
 import React, { useState, useRef, useEffect } from 'react';
+import cardInfo from '../../data/cardInfo';
 
 const LoadoutSection = (props) => {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -38,10 +39,21 @@ const LoadoutSection = (props) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [overlayIndex, setOverlayIndex] = useState(-1);
 
+  const [craftableList, setCraftableList] = useState([]);
+
   useEffect(() => {
     document.addEventListener('updateGrid', (e: CustomEvent) => {
       setGridArray(e.detail);
     });
+
+    document.addEventListener('updateCraftableList', (e: CustomEvent) => {
+      setCraftableList(e.detail);
+    }); 
+
+    return () => {
+      document.removeEventListener('updateGrid');
+      document.removeEventListener('updateCraftableList');
+    }
   }, []);
 
   useEffect(() => {
@@ -99,14 +111,18 @@ const LoadoutSection = (props) => {
             setIsOverlayOpen={setIsOverlayOpen} 
             overlayIndex={overlayIndex} 
             setGridArray={setGridArray}
+            craftableList={props.isCraftMode ? craftableList : Object.keys(cardInfo)}
           />
         )}
       </AnimatePresence> 
       <div id='grid-selector' style={{ display: 'none' }}>
-        <button id='select-grid-1'>Grid 1</button>
-        <button id='select-grid-2'>Grid 2</button>
-        <button id='select-grid-3'>Grid 3</button>
-        <button id='select-grid-4'>Grid 4</button>
+        <button id='select-grid-1' disabled={props.isCraftMode}>Grid 1</button>
+        <button id='select-grid-2' disabled={props.isCraftMode}>Grid 2</button>
+        <button id='select-grid-3' disabled={props.isCraftMode}>Grid 3</button>
+        <button id='select-grid-4' disabled={props.isCraftMode}>Grid 4</button>
+        <button id='select-grid-craft' onClick={() => props.setIsCraftMode(current => !current)}>
+          {props.isCraftMode ? `🔙 Exit` : `⚙️ Craft`}
+        </button>
       </div>
       <section id='grid-section'>
         <LoadoutGrid

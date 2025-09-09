@@ -2,9 +2,8 @@ import './Overlay.css';
 import React from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { motion } from 'motion/react';
-import cardInfo from '../../data/cardInfo';
 
-const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
+const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }) => {
   return (
     <motion.div
       id='Overlay'
@@ -17,7 +16,7 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
       }}
     >
       <div id='overlay-list'>
-        {Object.keys(cardInfo).map((card, index) => {
+        {craftableList.map((card, index) => {
           return (
             <div key={index} className='overlay-content'>
               <LoadoutCard

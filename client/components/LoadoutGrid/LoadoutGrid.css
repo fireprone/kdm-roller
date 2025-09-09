@@ -35,6 +35,10 @@
   border-radius: 1rem;
 }
 
+#grid-selector button:disabled {
+  background-color: inherit;
+}
+
 #select-grid-1 {
   background-color: rgb(147, 196, 125);
 }
@@ -49,4 +53,9 @@
 
 #select-grid-4 {
   background-color: rgb(243, 243, 243); 
+}
+
+#select-grid-craft {
+  background-color: #875;
+  color: white;
 }
