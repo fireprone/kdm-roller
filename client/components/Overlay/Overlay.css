@@ -33,6 +33,13 @@
   z-index: 5;
 }
 
+.overlay-content {
+  background-color: #630;
+  color: white;
+  border-radius: 1rem;
+}
+
+
 #Overlay #card-preview {
   position: relative;
   margin: 0 auto;

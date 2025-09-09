@@ -3,7 +3,6 @@ import LoadoutGrid from '../LoadoutGrid/LoadoutGrid';
 import { AnimatePresence } from 'motion/react';
 import Overlay from '../Overlay/Overlay';
 import React, { useState, useRef, useEffect } from 'react';
-import cardInfo from '../../data/cardInfo';
 
 const LoadoutSection = (props) => {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -111,7 +110,8 @@ const LoadoutSection = (props) => {
             setIsOverlayOpen={setIsOverlayOpen} 
             overlayIndex={overlayIndex} 
             setGridArray={setGridArray}
-            craftableList={props.isCraftMode ? craftableList : Object.keys(cardInfo)}
+            craftableList={craftableList}
+            isCraftMode={props.isCraftMode}
           />
         )}
       </AnimatePresence> 

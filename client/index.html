@@ -85,9 +85,13 @@
 
             craftableGearGridData.rowData.forEach((row) => {
               const gearName = row.values[0].formattedValue;
+              const resources = row.values[1].formattedValue;
 
               if (gearName) {
-                craftableGear.push(gearName.replaceAll(' ', '-'));
+                craftableGear.push({
+                  name: gearName.replaceAll(' ', '-'),
+                  resources,
+                });
               }
             });
 
