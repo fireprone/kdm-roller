@@ -1,9 +1,10 @@
 //TODO: On motion end, remove 'translate-3d' attr
 
 import './Cell.css';
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState, useContext } from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { motion } from 'motion/react';
+import { CraftContext } from '../../utils/CraftContext';
 
 const Cell = forwardRef(
   (
@@ -18,12 +19,12 @@ const Cell = forwardRef(
       setOverlayIndex,
       dragConstraints,
       cardName,
-      isCraftMode,
     },
     ref
   ) => {
 
     const [isNewlyCrafted, setIsNewlyCrafted] = useState(false);
+    const { isCraftMode } = useContext(CraftContext);
 
     useEffect(() => {
       if (cardName && isCraftMode) {

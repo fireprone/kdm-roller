@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import LoadoutSection from './components/LoadoutSection/LoadoutSection';
 import DiceChooser from './components/DiceChooser/DiceChooser';
 import World from './utils/World';
+import { CraftContext } from './utils/CraftContext';
 
 const scene = new THREE.Scene();
 World.initialize();
@@ -18,6 +19,7 @@ const App = () => {
   const [playerList, setPlayerList] = useState([]);
   const [focusedPlayer, setFocusedPlayer] = useState('');
   const [priorRolls, setPriorRolls] = useState([]);
+
   const [isCraftMode, setIsCraftMode] = useState(false);
 
   useEffect(() => {
@@ -29,27 +31,25 @@ const App = () => {
   }, [isCraftMode]);
 
   return (
-    <>
-      {/* <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} /> */}
-      <LoadoutSection 
-        isShowingCardsTray={false}
-        isShowingDiceTray={false}
-        isCraftMode={isCraftMode}
-        setIsCraftMode={setIsCraftMode}
-      /> 
+      <CraftContext.Provider value={{ isCraftMode, setIsCraftMode }}>
+        {/* <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} /> */}
+        <LoadoutSection 
+          isShowingCardsTray={false}
+          isShowingDiceTray={false}
+        /> 
 
-      <ThreeJsCanvas
-        {...{
-          scene,
-          setPlayerList,
-          focusedPlayer,
-          setFocusedPlayer,
-          setPriorRolls,
-        }}
-      />
-      <DiceChooser />
-      <RollHistory {...{ priorRolls }} />
-    </>
+        <ThreeJsCanvas
+          {...{
+            scene,
+            setPlayerList,
+            focusedPlayer,
+            setFocusedPlayer,
+            setPriorRolls,
+          }}
+        />
+        <DiceChooser />
+        <RollHistory {...{ priorRolls, isCraftMode }} />
+      </CraftContext.Provider>
   );
 };
 

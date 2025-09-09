@@ -2,10 +2,12 @@ import './LoadoutSection.css';
 import LoadoutGrid from '../LoadoutGrid/LoadoutGrid';
 import { AnimatePresence } from 'motion/react';
 import Overlay from '../Overlay/Overlay';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { CraftContext } from '../../utils/CraftContext';
 
 const LoadoutSection = (props) => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const { isCraftMode, setIsCraftMode } = useContext(CraftContext);
 
   let defaultGrid = [
     null,
@@ -111,17 +113,16 @@ const LoadoutSection = (props) => {
             overlayIndex={overlayIndex} 
             setGridArray={setGridArray}
             craftableList={craftableList}
-            isCraftMode={props.isCraftMode}
           />
         )}
       </AnimatePresence> 
       <div id='grid-selector' style={{ display: 'none' }}>
-        <button id='select-grid-1' disabled={props.isCraftMode}>Grid 1</button>
-        <button id='select-grid-2' disabled={props.isCraftMode}>Grid 2</button>
-        <button id='select-grid-3' disabled={props.isCraftMode}>Grid 3</button>
-        <button id='select-grid-4' disabled={props.isCraftMode}>Grid 4</button>
-        <button id='select-grid-craft' onClick={() => props.setIsCraftMode(current => !current)}>
-          {props.isCraftMode ? `🔙 Exit` : `⚙️ Craft`}
+        <button id='select-grid-1' disabled={isCraftMode}>Grid 1</button>
+        <button id='select-grid-2' disabled={isCraftMode}>Grid 2</button>
+        <button id='select-grid-3' disabled={isCraftMode}>Grid 3</button>
+        <button id='select-grid-4' disabled={isCraftMode}>Grid 4</button>
+        <button id='select-grid-craft' onClick={() => setIsCraftMode(current => !current)}>
+          {isCraftMode ? `🔙 Exit` : `⚙️ Craft`}
         </button>
       </div>
       <section id='grid-section'>
@@ -134,7 +135,6 @@ const LoadoutSection = (props) => {
           clickListener={setIsOverlayOpen}
           setOverlayIndex={setOverlayIndex}
           dragConstraints={sectionRef}
-          isCraftMode={props.isCraftMode}
         />
       </section>
     </div>

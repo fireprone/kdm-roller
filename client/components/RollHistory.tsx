@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { priorRoll } from '../types/Roll';
 import armImage from '../icons/small-arms.png';
 import bodyImage from '../icons/small-body.png';
 import headImage from '../icons/head.png';
 import legImage from '../icons/small-legs.png';
 import waistImage from '../icons/small-waist.png';
+import { CraftContext } from '../utils/CraftContext';
 
 const RollHistory = ({ priorRolls }) => {
   const [isShowing, setIsShowing] = useState(false);
+  const { isCraftMode } = useContext(CraftContext);
 
   const faceMap = {
     ARM: armImage,
@@ -40,7 +42,7 @@ const RollHistory = ({ priorRolls }) => {
         </div>
       )}
       <button id='history-button' onClick={() => setIsShowing(!isShowing)}>
-        {isShowing ? 'Hide' : 'History'}
+        {isShowing ? 'Hide' : (isCraftMode ? 'Total' : 'History')}
       </button>
     </>
   );

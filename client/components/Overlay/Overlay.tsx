@@ -1,10 +1,13 @@
 import './Overlay.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { motion } from 'motion/react';
 import cardInfo from '../../data/cardInfo';
+import { CraftContext } from '../../utils/CraftContext';
 
-const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList, isCraftMode }) => {
+const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }) => {
+  const { isCraftMode } = useContext(CraftContext);
+
   const cards = isCraftMode ? craftableList.map((card) => card.name) : Object.keys(cardInfo);
 
   return (
