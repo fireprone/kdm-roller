@@ -21,6 +21,9 @@ const App = () => {
   const [priorRolls, setPriorRolls] = useState([]);
 
   const [isCraftMode, setIsCraftMode] = useState(false);
+  const [resourcesList, setResourcesList] = useState([
+    null, null, null, null, null, null, null, null, null,
+  ]);
 
   useEffect(() => {
     if (isCraftMode) {
@@ -31,7 +34,7 @@ const App = () => {
   }, [isCraftMode]);
 
   return (
-      <CraftContext.Provider value={{ isCraftMode, setIsCraftMode }}>
+      <CraftContext.Provider value={{ isCraftMode, setIsCraftMode, resourcesList, setResourcesList }}>
         {/* <Players {...{ playerList, focusedPlayer, setFocusedPlayer }} /> */}
         <LoadoutSection 
           isShowingCardsTray={false}
@@ -48,7 +51,7 @@ const App = () => {
           }}
         />
         <DiceChooser />
-        <RollHistory {...{ priorRolls, isCraftMode }} />
+        <RollHistory {...{ priorRolls }} />
       </CraftContext.Provider>
   );
 };

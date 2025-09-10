@@ -30,6 +30,9 @@ const Cell = forwardRef(
       if (cardName && isCraftMode) {
         setIsNewlyCrafted(true);
       }
+      if (!cardName) {
+        setIsNewlyCrafted(false);
+      }
     }, [cardName]);
 
     useEffect(() => {

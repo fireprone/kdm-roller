@@ -6,7 +6,7 @@ import cardInfo from '../../data/cardInfo';
 import { CraftContext } from '../../utils/CraftContext';
 
 const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }) => {
-  const { isCraftMode } = useContext(CraftContext);
+  const { isCraftMode, setResourcesList } = useContext(CraftContext);
 
   const cards = isCraftMode ? craftableList.map((card) => card.name) : Object.keys(cardInfo);
 
@@ -31,6 +31,12 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }
                     const newArray = [...previous];
                     newArray[overlayIndex] = card.toLocaleLowerCase();
                     return newArray;
+                  });
+
+                  setResourcesList((current) => {
+                    const updated = [...current];
+                    updated[overlayIndex] = (craftableList[index].resources.split('+'))
+                    return updated;
                   });
 
                   setIsOverlayOpen(false);

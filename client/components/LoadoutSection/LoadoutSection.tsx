@@ -7,7 +7,7 @@ import { CraftContext } from '../../utils/CraftContext';
 
 const LoadoutSection = (props) => {
   const [activeIndex, setActiveIndex] = useState(null);
-  const { isCraftMode, setIsCraftMode } = useContext(CraftContext);
+  const { isCraftMode, setIsCraftMode, setResourcesList } = useContext(CraftContext);
 
   let defaultGrid = [
     null,
@@ -121,7 +121,15 @@ const LoadoutSection = (props) => {
         <button id='select-grid-2' disabled={isCraftMode}>Grid 2</button>
         <button id='select-grid-3' disabled={isCraftMode}>Grid 3</button>
         <button id='select-grid-4' disabled={isCraftMode}>Grid 4</button>
-        <button id='select-grid-craft' onClick={() => setIsCraftMode(current => !current)}>
+        <button 
+          id='select-grid-craft' 
+          onClick={() => {
+            if (isCraftMode) {
+              setResourcesList([]);  
+            }
+
+            setIsCraftMode(current => !current);
+          }}>
           {isCraftMode ? `🔙 Exit` : `⚙️ Craft`}
         </button>
       </div>
