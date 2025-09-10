@@ -63,6 +63,13 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }
 
             return newArray;
           });
+
+          setResourcesList((current) => {
+            const updated = [...current];
+            updated[overlayIndex] = null;
+            return updated;
+          }); 
+
           setIsOverlayOpen(false);
         }}
       >
