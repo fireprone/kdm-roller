@@ -12,12 +12,15 @@ import rawhideVest from '../img/Skinnery/rawhide-vest.png';
 
 import scavengerKit from '../img/BarberSurgeon/scavenger-kit.png';
 import firstAidKit from '../img/BarberSurgeon/first-aid-kit.png';
+import muskBomb from '../img/BarberSurgeon/musk-bomb.png';
+import greenCharm from '../img/BarberSurgeon/green-charm.png';
 
 import boneAxe from '../img/BoneSmith/bone-axe.png';
 import boneBlade from '../img/BoneSmith/bone-blade.png';
 import boneClub from '../img/BoneSmith/bone-club.png';
 import boneDagger from '../img/BoneSmith/bone-dagger.png';
 import boneDarts from '../img/BoneSmith/bone-darts.png';
+import skullHelm from '../img/BoneSmith/skull-helm.png';
 
 import singingCap from '../img/Chorosseum/singing-cap.png';
 import singingBreastplate from '../img/Chorosseum/singing-breastplate.png';
@@ -33,10 +36,14 @@ import luckyCharm from '../img/OrganGrinder/lucky-charm.png';
 import monsterGrease from '../img/OrganGrinder/monster-grease.png';
 import fecalSalve from '../img/OrganGrinder/fecal-salve.png';
 import driedAcanthus from '../img/OrganGrinder/dried-acanthus.png';
+import monsterToothNecklace from '../img/OrganGrinder/monster-tooth-necklace.png';
+
 import crimsonBow from '../img/Crockery/crimson-bow.png';
 import crimsonSlippers from '../img/Crockery/crimson-slippers.png';
-import bloodDagger from '../img/Crockery/blood-dagger.png';
+import bloodglassDagger from '../img/Crockery/bloodglass-dagger.png';
 import crocodileyes from '../img/Crockery/crocodileyes.png';
+import crimsonHelm from '../img/Crockery/crimson-helm.png'
+import crocboneHammer from '../img/Crockery/crocbone-hammer.png'
 
 import leatherBoots from '../img/LeatherWorker/leather-boots.png';
 import leatherMask from '../img/LeatherWorker/leather-mask.png';
@@ -47,8 +54,31 @@ import leatherSkirt from '../img/LeatherWorker/leather-skirt.png';
 
 import counterweightedAxe from '../img/WeaponCrafter/counterweighted-axe.png';
 import scrapSword from '../img/WeaponCrafter/scrap-sword.png';
+import skullcapHammer from '../img/WeaponCrafter/skullcap-hammer.png';
+import whistlingMace from '../img/WeaponCrafter/whistling-mace.png';
+import scrapBoneSpear from '../img/WeaponCrafter/scrap-bone-spear.png';
+import scrapRebar from '../img/WeaponCrafter/scrap-rebar.png';
+import scrapDagger from '../img/WeaponCrafter/scrap-dagger.png'; 
 
 import sonicTomahawk from '../img/Plumery/sonic-tomahawk.png';
+import arcBow from '../img/Plumery/arc-bow.png';
+import birdBread from '../img/Plumery/bird-bread.png';
+import bloodSheath from '../img/Plumery/blood-sheath.png';
+import bloomSphere from '../img/Plumery/bloom-sphere.png';
+import crestCrown from '../img/Plumery/crest-crown.png';
+import featherMantle from '../img/Plumery/feather-mantle.png';
+import featherShield from '../img/Plumery/feather-shield.png';
+import fingerOfGod from '../img/Plumery/finger-of-god.png';
+import hollowSword from '../img/Plumery/hollow-sword.png';
+import hollowpointArrow from '../img/Plumery/hollowpoint-arrow.png';
+import hoursRing from '../img/Plumery/hours-ring.png';
+import phoenixFaulds from '../img/Plumery/phoenix-faulds.png';
+import phoenixGauntlet from '../img/Plumery/phoenix-gauntlet.png';
+import phoenixGreaves from '../img/Plumery/phoenix-greaves.png';
+import phoenixHelm from '../img/Plumery/phoenix-helm.png';
+import phoenixMask from '../img/Plumery/phoenix-mask.png';
+import phoenixPlackart from '../img/Plumery/phoenix-plackart.png';
+import rainbowKatana from '../img/Plumery/rainbow-katana.png';
 
 import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 import royalScalpel from '../img/Rare/royal-scalpel.png';
@@ -61,6 +91,9 @@ import diamondScabKatar from '../img/SeedPattern/diamond-scab-katar.png';
 import fingernailWhip from '../img/SeedPattern/fingernail-whip.png';
 
 const cardInfo = {
+    "ARC-BOW": {
+      "Image": arcBow,
+    },
     "BANDAGES": {
       "Image": bandages,
       "Keywords": ["item"],
@@ -69,8 +102,17 @@ const cardInfo = {
       "Terms": [],
       "Affinities": ["LB", "DG"]
     },
-    "BLOOD-DAGGER": {
-      "Image": bloodDagger,
+    "BIRD-BREAD": {
+      "Image": birdBread,
+    },
+    "BLOODGLASS-DAGGER": {
+      "Image": bloodglassDagger,
+    },
+    "BLOOD-SHEATH": {
+      "Image": bloodSheath,
+    },
+    "BLOOM-SPHERE": {
+      "Image": bloomSphere,
     },
     "BONE-AXE": {
       "Image": boneAxe,
@@ -104,11 +146,20 @@ const cardInfo = {
       "Terms": [],
       "Affinities": []
     },
+    "CREST-CROWN": {
+      "Image": crestCrown,
+    },
     "CRIMSON-BOW": {
       "Image": crimsonBow,
     },
+    "CRIMSON-HELM": {
+      "Image": crimsonHelm,
+    },
     "CRIMSON-SLIPPERS": {
       "Image": crimsonSlippers,
+    },
+    "CROCBONE-HAMMER": {
+      "Image": crocboneHammer,
     },
     "CROCODILEYES": {
       "Image": crocodileyes,
@@ -125,11 +176,20 @@ const cardInfo = {
     "DRIED-ACANTHUS": {
       "Image": driedAcanthus,
     },
+    "FEATHER-MANTLE": {
+      "Image": featherMantle,
+    },
+    "FEATHER-SHIELD": {
+      "Image": featherShield,
+    },
     "FECAL-SALVE": {
       "Image": fecalSalve,
     },
     "FINGERNAIL-WHIP": {
       "Image": fingernailWhip,
+    },
+    "FINGER-OF-GOD": {
+      "Image": fingerOfGod,
     },
     "FIRST-AID-KIT": {
       "Image": firstAidKit,
@@ -146,8 +206,20 @@ const cardInfo = {
       "Terms": ["Archive"],
       "Affinities": []
     },
+    "GREEN-CHARM": {
+      "Image": greenCharm,
+    },
     "HAMFLUTER": {
       "Image": hamfluter,
+    },
+    "HOLLOW-SWORD": {
+      "Image": hollowSword,
+    },
+    "HOLLOWPOINT-ARROW": {
+      "Image": hollowpointArrow,
+    },
+    "HOURS-RING": {
+      "Image": hoursRing,
     },
     "LEATHER-BOOTS": {
       "Image": leatherBoots,
@@ -173,8 +245,35 @@ const cardInfo = {
     "MONSTER-GREASE": {
       "Image": monsterGrease,
     },
+    "MONSTER-TOOTH-NECKLACE": {
+      "Image": monsterToothNecklace,
+    },
+    "MUSK-BOMB": {
+      "Image": muskBomb,
+    },
+    "PHOENIX-FAULDS": {
+      "Image": phoenixFaulds,
+    },
+    "PHOENIX-GAUNTLET": {
+      "Image": phoenixGauntlet,
+    },
+    "PHOENIX-GREAVES": {
+      "Image": phoenixGreaves,
+    },
+    "PHOENIX-HELM": {
+      "Image": phoenixHelm,
+    },
+    "PHOENIX-MASK": {
+      "Image": phoenixMask,
+    },
+    "PHOENIX-PLACKART": {
+      "Image": phoenixPlackart,
+    },
     "PIPA": {
       "Image": pipa,
+    },
+    "RAINBOW-KATANA": {
+      "Image": rainbowKatana,
     },
     "RAWHIDE-BOOTS": {
       "Image": rawhideBoots,
@@ -258,6 +357,15 @@ const cardInfo = {
     "SCAVENGER-KIT": {
       "Image": scavengerKit,
     },
+    "SCRAP-BONE-SPEAR": {
+      "Image": scrapBoneSpear,
+    },
+    "SCRAP-DAGGER": {
+      "Image": scrapDagger,
+    },
+    "SCRAP-REBAR": {
+      "Image": scrapRebar,
+    },
     "SCRAP-SWORD": {
       "Image": scrapSword,
     },
@@ -276,6 +384,12 @@ const cardInfo = {
     "SINGING-PANTALOONS": {
       "Image": singingPantaloons,
     },
+    "SKULLCAP-HAMMER": {
+      "Image": skullcapHammer,
+    },
+    "SKULL-HELM": {
+      "Image": skullHelm,
+    },
     "SONIC-TOMAHAWK": {
       "Image": sonicTomahawk,
     },
@@ -286,8 +400,11 @@ const cardInfo = {
       "Image": stoneNoses,
     },
     "VERMIN-BELLYBOOTS": {
-      "IMAGE": verminBellyboots,
-    }
+      "Image": verminBellyboots,
+    },
+    "WHISTLING-MACE": {
+      "Image": whistlingMace,
+    },
   }
 
 export default cardInfo;
