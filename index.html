@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hello, World</title>
-    <script type="module" crossorigin src="/kdm-roller/assets/index-K6_fa8sD.js"></script>
-    <link rel="stylesheet" crossorigin href="/kdm-roller/assets/index-DPRR1XAV.css">
+    <script type="module" crossorigin src="/kdm-roller/assets/index-Fe4PGKKZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/kdm-roller/assets/index-WV6s3Dpe.css">
   </head>
   <body style="margin: 0">
     <div id="app"></div>
@@ -74,12 +74,31 @@
       
           const spreadsheetInfo = await gapi.client.sheets.spreadsheets.get({
             spreadsheetId: response.spreadsheetId,
-            ranges: ['Gear Storage!H1:R25'], 
+            ranges: [ 'Resources and Craftable Gear!F5:H200', 'Gear Storage!H1:R25'], 
             includeGridData: true,
           });
-          gearStorageGridData = spreadsheetInfo.result.sheets[0].data[0];
+          craftableGearGridData = spreadsheetInfo.result.sheets[0].data[0];
+          gearStorageGridData = spreadsheetInfo.result.sheets[1].data[0];
 
-          function getGridData(startingRow, startingColumn) {
+          function initializeCraftableGear() {
+            const craftableGear = [];
+
+            craftableGearGridData.rowData.forEach((row) => {
+              const gearName = row.values[0].formattedValue;
+              const resources = row.values[1].formattedValue;
+
+              if (gearName) {
+                craftableGear.push({
+                  name: gearName.replaceAll(' ', '-'),
+                  resources,
+                });
+              }
+            });
+
+            return craftableGear;
+          }
+
+          function parseGearStorageGridData(startingRow, startingColumn) {
             const gridX_1 = gearStorageGridData.rowData[startingRow].values[startingColumn].formattedValue?.replaceAll(' ', '-');
             const gridX_2 = gearStorageGridData.rowData[startingRow].values[startingColumn+2].formattedValue?.replaceAll(' ', '-');
             const gridX_3 = gearStorageGridData.rowData[startingRow].values[startingColumn+4].formattedValue?.replaceAll(' ', '-');
@@ -109,7 +128,7 @@
             const isFirstOrSecond = position < 3;
             const isOdd = position % 2 !== 0;
 
-            const grid = getGridData(isFirstOrSecond ? 3 : 13, isOdd ? 0 : 6);
+            const grid = parseGearStorageGridData(isFirstOrSecond ? 3 : 13, isOdd ? 0 : 6);
             const gridName = gearStorageGridData.rowData[isFirstOrSecond ? 1 : 11].values[isOdd ? 2 : 8].formattedValue;
             const gridButton = document.getElementById(`select-grid-${position}`);
             gridButton.innerHTML = `Grid ${position} -- <b>${gridName}</b>`;
@@ -120,6 +139,10 @@
           }
 
           document.getElementById('grid-selector').style.display = 'flex';
+          
+          const craftableGear = initializeCraftableGear();
+          const craftableListEvent = new CustomEvent('updateCraftableList', { detail: craftableGear });
+          document.dispatchEvent(craftableListEvent);
           
           for (let i = 0; i < 4; i++) {
             initializeGridButton(i+1);
