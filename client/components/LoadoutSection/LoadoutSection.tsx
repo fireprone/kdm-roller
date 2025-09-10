@@ -2,10 +2,12 @@ import './LoadoutSection.css';
 import LoadoutGrid from '../LoadoutGrid/LoadoutGrid';
 import { AnimatePresence } from 'motion/react';
 import Overlay from '../Overlay/Overlay';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { CraftContext } from '../../utils/CraftContext';
 
 const LoadoutSection = (props) => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const { isCraftMode, setIsCraftMode, setResourcesList } = useContext(CraftContext);
 
   let defaultGrid = [
     null,
@@ -38,10 +40,21 @@ const LoadoutSection = (props) => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [overlayIndex, setOverlayIndex] = useState(-1);
 
+  const [craftableList, setCraftableList] = useState([]);
+
   useEffect(() => {
     document.addEventListener('updateGrid', (e: CustomEvent) => {
       setGridArray(e.detail);
     });
+
+    document.addEventListener('updateCraftableList', (e: CustomEvent) => {
+      setCraftableList(e.detail);
+    }); 
+
+    return () => {
+      document.removeEventListener('updateGrid');
+      document.removeEventListener('updateCraftableList');
+    }
   }, []);
 
   useEffect(() => {
@@ -99,14 +112,26 @@ const LoadoutSection = (props) => {
             setIsOverlayOpen={setIsOverlayOpen} 
             overlayIndex={overlayIndex} 
             setGridArray={setGridArray}
+            craftableList={craftableList}
           />
         )}
       </AnimatePresence> 
       <div id='grid-selector' style={{ display: 'none' }}>
-        <button id='select-grid-1'>Grid 1</button>
-        <button id='select-grid-2'>Grid 2</button>
-        <button id='select-grid-3'>Grid 3</button>
-        <button id='select-grid-4'>Grid 4</button>
+        <button id='select-grid-1' disabled={isCraftMode}>Grid 1</button>
+        <button id='select-grid-2' disabled={isCraftMode}>Grid 2</button>
+        <button id='select-grid-3' disabled={isCraftMode}>Grid 3</button>
+        <button id='select-grid-4' disabled={isCraftMode}>Grid 4</button>
+        <button 
+          id='select-grid-craft' 
+          onClick={() => {
+            if (isCraftMode) {
+              setResourcesList([]);  
+            }
+
+            setIsCraftMode(current => !current);
+          }}>
+          {isCraftMode ? `🔙 Exit` : `⚙️ Craft`}
+        </button>
       </div>
       <section id='grid-section'>
         <LoadoutGrid

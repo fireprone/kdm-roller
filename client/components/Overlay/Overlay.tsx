@@ -1,15 +1,20 @@
 import './Overlay.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import LoadoutCard from '../LoadoutCard/LoadoutCard';
 import { motion } from 'motion/react';
 import cardInfo from '../../data/cardInfo';
+import { CraftContext } from '../../utils/CraftContext';
 
-const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
+const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray, craftableList }) => {
+  const { isCraftMode, setResourcesList } = useContext(CraftContext);
+
+  const cards = isCraftMode ? craftableList.map((card) => card.name) : Object.keys(cardInfo);
+
   return (
     <motion.div
       id='Overlay'
       initial={{ opacity: 0, marginTop: 0 }}
-      animate={{ opacity: 1, marginTop: '10vmin' }}
+      animate={{ opacity: 1, marginTop: 0 }}
       exit={{ opacity: 0, marginTop: 0 }}
       transition={{
         opacity: { type: 'tween', duration: 0.3 },
@@ -17,7 +22,7 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
       }}
     >
       <div id='overlay-list'>
-        {Object.keys(cardInfo).map((card, index) => {
+        {cards.map((card, index) => {
           return (
             <div key={index} className='overlay-content'>
               <LoadoutCard
@@ -28,10 +33,23 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
                     return newArray;
                   });
 
+                  setResourcesList((current) => {
+                    const updated = [...current];
+                    updated[overlayIndex] = (craftableList[index].resources.split('+'))
+                    return updated;
+                  });
+
                   setIsOverlayOpen(false);
                 }} 
                 name={card.toLocaleLowerCase()}
               />
+              {isCraftMode && (
+                <ul>
+                    {craftableList[index].resources?.split('+').map((resource, index) => {
+                      return <li key={index}>{resource}</li>;
+                    })}
+                </ul>
+              )}
             </div>
           );
         })}
@@ -45,6 +63,13 @@ const Overlay = ({ setIsOverlayOpen, overlayIndex, setGridArray }) => {
 
             return newArray;
           });
+
+          setResourcesList((current) => {
+            const updated = [...current];
+            updated[overlayIndex] = null;
+            return updated;
+          }); 
+
           setIsOverlayOpen(false);
         }}
       >

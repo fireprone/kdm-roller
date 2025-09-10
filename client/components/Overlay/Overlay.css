@@ -3,11 +3,15 @@
 }
 
 #overlay-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(50px, 1fr));
+  grid-gap: 1rem;
+  justify-items: center;
+  overflow-y: scroll;
   max-height: 100%;
-  overflow-y: auto;
-  margin: 0 auto;
-  width: fit-content;
-  padding: 0 1.5rem;
+  max-width: 50rem;
+  margin: auto;
+  scrollbar-width: none;
 }
 
 #overlay-bg {
@@ -25,9 +29,16 @@
 
 .overlay-content {
   position: relative;
-  width: 30vw;
+  width: 100%;
   z-index: 5;
 }
+
+.overlay-content {
+  background-color: #630;
+  color: white;
+  border-radius: 1rem;
+}
+
 
 #Overlay #card-preview {
   position: relative;
