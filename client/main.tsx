@@ -50,7 +50,7 @@ const App = () => {
             setPriorRolls,
           }}
         />
-        <DiceChooser />
+        {!isCraftMode && <DiceChooser />}
         <RollHistory {...{ priorRolls }} />
       </CraftContext.Provider>
   );
