@@ -21,6 +21,7 @@ import boneClub from '../img/BoneSmith/bone-club.png';
 import boneDagger from '../img/BoneSmith/bone-dagger.png';
 import boneDarts from '../img/BoneSmith/bone-darts.png';
 import skullHelm from '../img/BoneSmith/skull-helm.png';
+import bonePickaxe from '../img/BoneSmith/bone-pickaxe.png';
 
 import singingCap from '../img/Chorosseum/singing-cap.png';
 import singingBreastplate from '../img/Chorosseum/singing-breastplate.png';
@@ -89,6 +90,8 @@ import dreamKeeperKnife from '../img/SeedPattern/dream-keeper-knife.png';
 import cruelCleaver from '../img/SeedPattern/cruel-cleaver.png';
 import diamondScabKatar from '../img/SeedPattern/diamond-scab-katar.png';
 import fingernailWhip from '../img/SeedPattern/fingernail-whip.png';
+import cyclopsLedger from '../img/SeedPattern/cyclops-ledger.png';
+import weaponsmithsHammer from '../img/SeedPattern/weaponsmiths-hammer.png';
 
 const cardInfo = {
     "ARC-BOW": {
@@ -129,6 +132,9 @@ const cardInfo = {
     "BONE-DARTS": {
       "Image": boneDarts,
     },
+    "BONE-PICKAXE": {
+      "Image": bonePickaxe,
+    },
     "BUTCHER-CLEAVER": {
       "Image": butcherCleaver,
     },
@@ -166,6 +172,9 @@ const cardInfo = {
     },
     "CRUEL-CLEAVER": {
       "Image": cruelCleaver,
+    },
+    "CYCLOPS-LEDGER": {
+      "Image": cyclopsLedger,
     },
     "DIAMOND-SCAB-KATAR": {
       "Image": diamondScabKatar,
@@ -401,6 +410,9 @@ const cardInfo = {
     },
     "VERMIN-BELLYBOOTS": {
       "Image": verminBellyboots,
+    },
+    "WEAPONSMITHS-HAMMER": {
+      "Image": weaponsmithsHammer,
     },
     "WHISTLING-MACE": {
       "Image": whistlingMace,
