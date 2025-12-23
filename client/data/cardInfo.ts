@@ -83,6 +83,8 @@ import rainbowKatana from '../img/Plumery/rainbow-katana.png';
 
 import butcherCleaver from '../img/Rare/butcher-cleaver-l.png';
 import royalScalpel from '../img/Rare/royal-scalpel.png';
+import royalDecorations from '../img/Rare/royal-decorations.png';
+import chaosElfHat from '../img/Rare/chaos-elf-hat.png';
 
 import verminBellyboots from '../img/Outskirts/vermin-bellyboots.png';
 
@@ -151,6 +153,9 @@ const cardInfo = {
       "Origin": "Starting Gear",
       "Terms": [],
       "Affinities": []
+    },
+    "CHAOS-ELF-HAT": {
+      "Image": chaosElfHat,
     },
     "CREST-CROWN": {
       "Image": crestCrown,
@@ -359,6 +364,9 @@ const cardInfo = {
       "Origin": "Skinnery",
       "Terms": ["Provoke", "Priority Target"],
       "Affinities": []
+    },
+    "ROYAL-DECORATIONS": {
+      "Image": royalDecorations,
     },
     "ROYAL-SCALPEL": {
       "Image": royalScalpel,
